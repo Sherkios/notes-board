@@ -1,6 +1,10 @@
 <template>
   <div class="form">
 
+    <div class="form__icon form-icon">
+      <div class="form-icon__content"><slot name="svg"></slot></div>
+    </div>
+
     <div class="form__title-box">
       <div class="form__title">
         <slot></slot>
@@ -40,6 +44,7 @@
     background-color: var(--gray);
     color: var(--white);
 
+
     &__title-box {
       display: flex;
       flex-direction: column;
@@ -59,6 +64,36 @@
     &__buttons {
       display: flex;
       gap: 12px;
+    }
+  }
+
+  .form-icon {
+    --diametr: 64px;
+    width: var(--diametr);
+    height: var(--diametr);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    align-self: center;
+    border-radius: 50%;
+    
+
+    background: var(--white);
+
+    &__content {
+      --diametr: 44px;
+      width: var(--diametr);
+      height: var(--diametr);
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      border-radius: 50%;
+
+      background-color: var(--gray);
     }
   }
 </style>

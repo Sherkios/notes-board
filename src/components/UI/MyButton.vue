@@ -1,5 +1,5 @@
 <template>
-  <div class="button">
+  <div class="button" :class="buttonClassName" >
     <slot></slot>
   </div>
 </template>
@@ -7,6 +7,20 @@
 <script>
   export default {
     name: 'my-button',
+    props: {
+      buttonType: {
+        type: [String, Number],
+        default: "blue",
+      }
+    },
+    computed: {
+      buttonClassName() {
+        return {
+          "button_dark": this.buttonType == "dark",
+          "button_red": this.buttonType == "red",
+        }
+      }
+    }
     
   }
 </script>
@@ -25,5 +39,13 @@
     border-radius: 8px;
 
     cursor: pointer;
+
+    &_dark {
+      --button-background-color: var(--main-dark);
+      box-shadow: none;
+    }
+    &_red {
+      --button-background-color: var(--red);
+    }
   }
 </style>

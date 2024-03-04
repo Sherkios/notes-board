@@ -13,6 +13,7 @@
   --main-dark: rgba(24, 24, 25, 1);
   --gray: rgba(42, 42, 43, 1);
   --blue: rgba(0, 95, 249, 1);
+  --red: rgba(186, 1, 23, 1);
   --white: rgba(255, 255, 255, 1);
   --button-background-color: var(--blue);
   --button-color: var(--white);

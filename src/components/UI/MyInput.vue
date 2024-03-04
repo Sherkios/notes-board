@@ -1,7 +1,7 @@
 <template>
-  <label class="input-box">
+  <label class="input-box" :class="{'input-box_error': hasError}">
     <p class="input-box__label"><slot></slot></p>
-    <input :value="modelValue" @input="updateInput" class="input-box__input" :type="type">
+    <input :value="modelValue" @input="updateInput" class="input-box__input" :type="type" :placeholder="placeholder">
   </label>
 </template>
 
@@ -16,6 +16,14 @@ export default {
     type: {
       type: String,
       default: 'text',
+    },
+    placeholder: {
+      type: String,
+      default: 'Заполните...',
+    },
+    hasError: {
+      type: Boolean,
+      default: false,
     }
   },
   methods: {
@@ -28,15 +36,20 @@ export default {
 
 <style lang="scss" scoped>
 .input-box {
+  --label-color: var(--white);
+  --input-border: 1px solid transparent;
   width: 100%;
   display: flex;
   flex-direction: column;
   gap: 6px;
 
-  &__label {
-    
+  &_error {
+    --label-color: var(--red);
+  }
 
-    color: var(--white);
+  &__label {
+    color: var(--label-color);
+    transition: all 0.5s ease;
   }
 
   &__input {
@@ -44,7 +57,7 @@ export default {
     padding: 10px 14px;
     color: var(--main-dark);
     background-color: var(--white);
-    border: none;
+    border: var( --input-border, 1px solid transparent);
     border-radius: 8px;
     outline: none;
   }
