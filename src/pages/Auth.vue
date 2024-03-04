@@ -24,22 +24,26 @@
 
         <template #inputs>
           <my-input
-            v-model.trim="login"
+            v-model.trim="username"
             placeholder="Логин"
-            :hasError="!errors.login"
+            :hasError="errors.username"
             >Логин</my-input
           >
           <my-input
             v-model="password"
             type="password"
             placeholder="Пароль"
-            :hasError="!errors.password"
+            :hasError="errors.password"
             >password</my-input
           >
         </template>
 
         <template #buttons>
           <my-button class="auth__button" @click="LogIn">Войти</my-button>
+        </template>
+
+        <template v-if="errorMessage" #errorMessage>
+          {{ errorMessage }}
         </template>
       </my-form>
     </div>
@@ -48,25 +52,63 @@
 
 <script>
 import ValidateInput from "@/mixins/ValidateInput";
+import axios from "axios";
 
 export default {
   mixins: [ValidateInput],
   data() {
     return {
-      login: "",
+      username: "",
       password: "",
       errors: {
-        login: false,
+        username: false,
         password: false,
       },
+      errorMessage: "",
     };
   },
   methods: {
-    LogIn(event) {
-      this.errors.login = this.validateInput(this.login);
+    LogIn() {
+      this.errors.username = this.validateInput(this.username);
       this.errors.password = this.validateInput(this.password);
+
+      if (this.getHasLogin()) {        
+        this.authorizate();
+      }
     },
+    async authorizate() {
+      try {
+        const response = await axios.post('https://dummyjson.com/auth/login', {
+          username: this.username,
+          password: this.password,
+        });
+        console.log(response.data);
+        this.errorMessage = "";
+
+      } catch (error) {
+        console.log(error)
+        if (error.response.data.message == "Invalid credentials") {
+          this.errorMessage = "Неверный логин или пароль";
+        } else {
+          this.errorMessage = error.response.data.message;
+
+        }
+      }
+      
+    },
+    getHasLogin() {
+      let has = false;
+      for (let value of Object.values(this.errors)) { 
+        if (!has) {
+          has = this.validateInput(value);
+        }
+      }
+      return has;
+    }
   },
+  computed: {
+    
+  }
 };
 </script>
 

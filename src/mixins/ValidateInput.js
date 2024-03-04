@@ -2,9 +2,9 @@ export default {
   methods: {
     validateInput(value) {
       if (value != "") {
-        return true;
+        return false;
       }
-      return false;
+      return true;
     }
   }
 }

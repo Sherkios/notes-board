@@ -20,6 +20,9 @@
     <div class="form__buttons">
       <slot name="buttons"></slot>
     </div>
+    <div v-if="$slots.errorMessage" class="form__message">
+      <slot name="errorMessage"></slot>
+    </div>
   </div>
 </template>
 
@@ -64,6 +67,11 @@
     &__buttons {
       display: flex;
       gap: 12px;
+    }
+    
+    &__message {
+      text-align: center;
+      color: var(--red);
     }
   }
 
