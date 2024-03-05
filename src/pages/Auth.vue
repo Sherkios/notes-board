@@ -42,9 +42,19 @@
           <my-button class="auth__button" @click="LogIn">Войти</my-button>
         </template>
 
+        <template #tooltip>
+          <div class="auth__tooltip" @mouseover="tooltip.show = true" @mouseleave="tooltip.show = false">
+            <p class="auth__tooltip-header">Подсказка</p>
+            
+            <p class="auth__tooltip-info" :class="{'show': tooltip.show}">{{ getTooltip }}</p>
+          </div>
+        </template>
+
         <template v-if="errorMessage" #errorMessage>
           {{ errorMessage }}
         </template>
+
+
       </my-form>
     </div>
   </div>
@@ -68,6 +78,11 @@ export default {
         password: false,
       },
       errorMessage: "",
+      tooltip: {
+        username: "kminchelle",
+        password: "0lelplR",
+        show: false,
+      }
     };
   },
   methods: {
@@ -100,28 +115,6 @@ export default {
         }
       }
     },
-    // async authorizate() {
-    //   try {
-    //     const response = await axios.post('https://dummyjson.com/auth/login', {
-    //       username: this.username,
-    //       password: this.password,
-    //     });
-    //     this.errorMessage = "";
-
-    //     setCookie("token", response.data.token);
-    //     this.$router.push("/");
-
-    //   } catch (error) {
-    //     console.log(error)
-    //     if (error.response.data.message == "Invalid credentials") {
-    //       this.errorMessage = "Неверный логин или пароль";
-    //     } else {
-    //       this.errorMessage = error.response.data.message;
-
-    //     }
-    //   }
-
-    // },
     getHasLogin() {
       let has = false;
       for (let value of Object.values(this.errors)) {
@@ -132,7 +125,11 @@ export default {
       return has;
     },
   },
-  computed: {},
+  computed: {
+    getTooltip() {
+      return "Логин: " + this.tooltip.username + " Пароль: " + this.tooltip.password;
+    }
+  },
 };
 </script>
 
@@ -146,6 +143,16 @@ export default {
   &__button {
     margin-top: 12px;
   }
+
+  .auth__tooltip-info {
+    height: 0em;
+    opacity: 0;
+    transition: all 0.5s ease;
+
+    &.show {
+      height: 1em;
+      opacity: 1;
+    }
+  }
 }
 </style>
-@/functions/Coockies/GetCoockie@/functions/Coockies/SetCoockie@/functions/Coockies/GetCookie

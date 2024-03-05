@@ -17,6 +17,9 @@
     
     
     <slot name="inputs"></slot>
+    
+    <slot name="tooltip"></slot>
+
     <div class="form__buttons">
       <slot name="buttons"></slot>
     </div>

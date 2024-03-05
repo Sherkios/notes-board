@@ -62,7 +62,7 @@ router.beforeEach(async (to, from, next) => {
     let token = getCookie('token');
     if (!(await authenticationToken(token))) {
       next({
-        path: '/Auth',
+        path: '/auth',
         query: { redirect: to.fullPath }
       })
     } else {

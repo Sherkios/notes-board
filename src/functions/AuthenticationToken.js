@@ -1,7 +1,7 @@
+import store from "@/store";
 import axios from "axios";
 
 export default async function authenticationToken(token) {
-  console.log(token);
   if (token !== undefined) {
     try {
       let response = await axios.get("https://dummyjson.com/auth/me", {
@@ -11,6 +11,9 @@ export default async function authenticationToken(token) {
     });
 
     if (response.status == 200) {
+      store.state.auth.firstName = response.data.firstName
+      store.state.auth.lastName = response.data.lastName
+      store.state.auth.email = response.data.email
       return true
     }
     } catch (error) {
