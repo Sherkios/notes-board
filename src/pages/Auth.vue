@@ -51,8 +51,11 @@
 </template>
 
 <script>
+import getCookie from "@/functions/Coockies/GetCookie";
+import setCookie from "@/functions/Coockies/SetCookie";
 import ValidateInput from "@/mixins/ValidateInput";
 import axios from "axios";
+import { mapState, mapActions, mapGetters, mapMutations } from "vuex";
 
 export default {
   mixins: [ValidateInput],
@@ -68,47 +71,68 @@ export default {
     };
   },
   methods: {
-    LogIn() {
+    ...mapActions({
+      authorizate: "auth/authorizate",
+    }),
+    async LogIn() {
       this.errors.username = this.validateInput(this.username);
       this.errors.password = this.validateInput(this.password);
 
-      if (this.getHasLogin()) {        
-        this.authorizate();
-      }
-    },
-    async authorizate() {
       try {
-        const response = await axios.post('https://dummyjson.com/auth/login', {
-          username: this.username,
-          password: this.password,
-        });
-        console.log(response.data);
-        this.errorMessage = "";
-
+        if (this.getHasLogin()) {
+          await this.authorizate({
+            username: this.username,
+            password: this.password,
+          });
+          console.log(this.$routr);
+          if (this.$route.query.redirect) {
+            this.$router.push(this.$route.query.redirect);
+          } else {
+            this.$router.push("/");
+          }
+        }
       } catch (error) {
-        console.log(error)
+        console.log(error);
         if (error.response.data.message == "Invalid credentials") {
           this.errorMessage = "Неверный логин или пароль";
         } else {
           this.errorMessage = error.response.data.message;
-
         }
       }
-      
     },
+    // async authorizate() {
+    //   try {
+    //     const response = await axios.post('https://dummyjson.com/auth/login', {
+    //       username: this.username,
+    //       password: this.password,
+    //     });
+    //     this.errorMessage = "";
+
+    //     setCookie("token", response.data.token);
+    //     this.$router.push("/");
+
+    //   } catch (error) {
+    //     console.log(error)
+    //     if (error.response.data.message == "Invalid credentials") {
+    //       this.errorMessage = "Неверный логин или пароль";
+    //     } else {
+    //       this.errorMessage = error.response.data.message;
+
+    //     }
+    //   }
+
+    // },
     getHasLogin() {
       let has = false;
-      for (let value of Object.values(this.errors)) { 
+      for (let value of Object.values(this.errors)) {
         if (!has) {
           has = this.validateInput(value);
         }
       }
       return has;
-    }
+    },
   },
-  computed: {
-    
-  }
+  computed: {},
 };
 </script>
 
@@ -124,3 +148,4 @@ export default {
   }
 }
 </style>
+@/functions/Coockies/GetCoockie@/functions/Coockies/SetCoockie@/functions/Coockies/GetCookie
