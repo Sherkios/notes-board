@@ -1,2 +1,18 @@
 @import "reset";
 @import "fonts";
+
+body {
+  font-family: Inter;
+  background-color: var(--main-dark);
+  line-height: normal;
+}
+
+.wrapper {
+  max-width: 1280px;
+  padding: 0 40px;
+  margin: 0 auto;
+}
+
+* {
+  box-sizing: border-box;
+}

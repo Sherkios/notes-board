@@ -16,18 +16,5 @@
   --button-color: var(--white);
 }
 
-body {
-  font-family: Inter;
-  background-color: var(--main-dark);
-  line-height: normal;
-}
 
-.wrapper {
-  padding: 0 40px;
-  margin: 0 auto;
-}
-
-* {
-  box-sizing: border-box;
-}
 </style>

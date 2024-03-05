@@ -1,16 +1,15 @@
 <template>
-  <header>
-    <nav>
-      <router-link to="/">Главная</router-link>
-      <router-link to="/auth">Авторизация</router-link>
-      <router-link to="/AllNotes">Все заметки</router-link>
-    </nav>
-  </header>
+  <my-header></my-header>
   <router-view/>
 </template>
 
 <script>
+import MyHeader from '@/components/MyHeader.vue';
+
 export default {
+  components: {
+    MyHeader,
+  },
   setup () {
     
 
