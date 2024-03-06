@@ -8,6 +8,7 @@ export default {
     firstName: '',
     lastName: '',
     email: '',
+    userId: null,
   }),
   mutations: {
     setFirstName(state, firstName) {
@@ -18,6 +19,9 @@ export default {
     },
     setEmail(state, email) {
       state.email = email;
+    },
+    setUserId(state, userId) {
+      state.userId = userId;
     },
   },
   getters: {
@@ -37,16 +41,19 @@ export default {
         commit("setFirstName", response.data.firstName);
         commit("setLastName", response.data.lastName);
         commit("setEmail", response.data.email);
+        commit("setUserId", response.data.id);
       } catch (error) {
         throw error;
       }
     },
+
     logOut({state, commit}) {
       router.push('/auth');
       deleteCookie("token");
       commit("setFirstName", '');
       commit("setLastName", '');
       commit("setEmail", '');
-    }
+      commit("setUserId", '');
+    },
   }
 }

@@ -1,9 +1,8 @@
-import Auth from '@/pages/Auth.vue'
-import MyNotes from '@/pages/MyNotes.vue'
 import AllNotes from '@/pages/AllNotes.vue'
-import authenticationToken from '@/functions/AuthenticationToken.js'
 import getCookie from '@/functions/Coockies/GetCookie.js'
+import authenticationToken from '@/functions/Auth/AuthenticationToken.js'
 import { createRouter, createWebHistory } from 'vue-router'
+import store from '@/store'
 
 const routes = [
   {
@@ -56,21 +55,26 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-  if (to.matched.some(record => record.meta.authRequired)) {
-    // этот путь требует авторизации, проверяем залогинен ли
-    // пользователь, и если нет, перенаправляем на страницу логина
-    let token = getCookie('token');
-    if (!(await authenticationToken(token))) {
-      next({
-        path: '/auth',
-        query: { redirect: to.fullPath }
-      })
+    if (to.matched.some(record => record.meta.authRequired)) {
+      // этот путь требует авторизации, проверяем залогинен ли
+      // пользователь, и если нет, перенаправляем на страницу логина
+      let token = getCookie('token');
+      if (!(await authenticationToken(token))) {
+        next({
+          path: '/auth',
+          query: { redirect: to.fullPath }
+        })
+      } else {
+        next()
+      }
     } else {
-      next()
+      next() // всегда так или иначе нужно вызвать next()!
     }
-  } else {
-    next() // всегда так или иначе нужно вызвать next()!
-  }
+  });
+
+router.afterEach(async (to, from) => {
+  // console.log(store);
+  // console.log(store.getters['auth/fullName']);
 })
 
 export default router

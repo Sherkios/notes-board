@@ -1,6 +1,5 @@
 import store from "@/store";
 import axios from "axios";
-
 export default async function authenticationToken(token) {
   if (token !== undefined) {
     try {
@@ -11,9 +10,10 @@ export default async function authenticationToken(token) {
     });
 
     if (response.status == 200) {
-      store.state.auth.firstName = response.data.firstName
-      store.state.auth.lastName = response.data.lastName
-      store.state.auth.email = response.data.email
+      store.commit('auth/setFirstName', response.data.firstName);
+      store.commit('auth/setLastName', response.data.lastName);
+      store.commit('auth/setEmail', response.data.email);
+      store.commit('auth/setUserId', response.data.id);
       return true
     }
     } catch (error) {
