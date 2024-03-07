@@ -61,11 +61,8 @@
 </template>
 
 <script>
-import getCookie from "@/functions/Coockies/GetCookie";
-import setCookie from "@/functions/Coockies/SetCookie";
-import ValidateInput from "@/mixins/ValidateInput";
-import axios from "axios";
 import { mapState, mapActions, mapGetters, mapMutations } from "vuex";
+import ValidateInput from "@/mixins/ValidateInput";
 
 export default {
   mixins: [ValidateInput],
@@ -79,8 +76,8 @@ export default {
       },
       errorMessage: "",
       tooltip: {
-        username: "kminchelle",
-        password: "0lelplR",
+        username: "igannan11",
+        password: "MB63jkg3W",
         show: false,
       }
     };

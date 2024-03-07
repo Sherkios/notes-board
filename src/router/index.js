@@ -35,8 +35,18 @@ const routes = [
         name: "allNotes",
         meta: {
           authRequired: true,
+          isAdmin: true,
         },
         component: () => import("@/pages/AllNotes.vue"),
+      },
+      {
+        path: "users",
+        name: "users",
+        meta: {
+          authRequired: true,
+          isAdmin: true,
+        },
+        component: () => import("@/pages/Users.vue"),
       }
     ]
   },
@@ -65,11 +75,26 @@ router.beforeEach(async (to, from, next) => {
           query: { redirect: to.fullPath }
         })
       } else {
-        next()
+        if (to.matched.some(record => record.meta.isAdmin)) {
+          // этот путь требует авторизации, проверяем залогинен ли
+          // пользователь, и если нет, перенаправляем на страницу логина
+          if (!store.getters['auth/isAdmin']) {
+            next({
+              path: '/',
+              query: { redirect: to.fullPath }
+            })
+          } else {
+            next()
+          }
+        } else {
+          next() // всегда так или иначе нужно вызвать next()!
+        }
       }
     } else {
       next() // всегда так или иначе нужно вызвать next()!
     }
+    
+    
   });
 
 router.afterEach(async (to, from) => {

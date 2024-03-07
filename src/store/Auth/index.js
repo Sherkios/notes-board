@@ -9,6 +9,7 @@ export default {
     lastName: '',
     email: '',
     userId: null,
+    gender: '',
   }),
   mutations: {
     setFirstName(state, firstName) {
@@ -23,6 +24,9 @@ export default {
     setUserId(state, userId) {
       state.userId = userId;
     },
+    setGender(state, gender) {
+      state.gender = gender;
+    },
   },
   getters: {
     fullName(state) {
@@ -30,6 +34,9 @@ export default {
     },
     shortName(state) {
       return state.firstName.slice(0,1) + state.lastName.slice(0,1);
+    },
+    isAdmin(state) {
+      return state.gender == 'male'
     }
   },
   actions: {
@@ -42,6 +49,7 @@ export default {
         commit("setLastName", response.data.lastName);
         commit("setEmail", response.data.email);
         commit("setUserId", response.data.id);
+        commit("setGender", response.data.gender);
       } catch (error) {
         throw error;
       }
@@ -54,6 +62,7 @@ export default {
       commit("setLastName", '');
       commit("setEmail", '');
       commit("setUserId", '');
+      commit("setGender", '');
     },
   }
 }

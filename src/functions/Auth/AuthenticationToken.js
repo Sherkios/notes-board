@@ -14,6 +14,7 @@ export default async function authenticationToken(token) {
       store.commit('auth/setLastName', response.data.lastName);
       store.commit('auth/setEmail', response.data.email);
       store.commit('auth/setUserId', response.data.id);
+      store.commit('auth/setGender', response.data.gender);
       return true
     }
     } catch (error) {

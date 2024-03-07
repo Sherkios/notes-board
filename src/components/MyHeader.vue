@@ -3,9 +3,9 @@
     <div class="wrapper header__wrapper">
       <div class="header__left">
         <router-link to="/" class="header__logo">noty</router-link>
-        <nav class="header__nav nav">
+        <nav class="header__nav nav" v-if="isAdmin">
           <router-link to="allNotes" class="nav__link">Заметки пользователей</router-link>
-          <router-link to="allNotes" class="nav__link">Пользователи</router-link>
+          <router-link to="users" class="nav__link">Пользователи</router-link>
         </nav>
       </div>
       
@@ -42,6 +42,7 @@ export default {
     ...mapGetters({
       fullName: 'auth/fullName',
       shortName: 'auth/shortName',
+      isAdmin: 'auth/isAdmin',
     }),
     ...mapState({
       email: state => state.auth.email
