@@ -2,7 +2,7 @@ import axios from "axios";
 
 export default {
   methods: {
-    async getPosts(id = 'all') {
+    async getPosts(id = null) {
       try {
         let response;
         let resultPosts = [];     
@@ -18,7 +18,7 @@ export default {
         return resultPosts;
       } catch (error) {
         console.warn(error)
-        return null;
+        return {};
       }
     }
   }

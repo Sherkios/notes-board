@@ -5,40 +5,35 @@
     :key="post.id"
     :post="post"
     :isShowUser="isShowUser"
-    @showRemoveDialog="showRemoveDialog"
-    @showChangeDialog="showChangeDialog"
+    @show-remove-dialog="((id) => $emit('show-remove-dialog', id))"
+    @show-change-dialog="((post) => $emit('show-change-dialog', post))"
     ></post-item>
   </div>
 
-  <my-dialog v-model:is-show="isShowDialog">
-
-    <delete-form v-if="typeDialog == 'delete'"
-    @hide="hideDialog"
-    @removePost="removePost"
-    ></delete-form>
-
-    <change-form v-if="typeDialog == 'change'"
-    @hide="hideDialog"
-    @changePost="changePost"
-    :postEl="changesPost"
-    ></change-form>
-
-  </my-dialog>
 </template>
 
 <script>
 
 import axios from 'axios';
 import PostItem from "@/components/posts/PostItem.vue";
-import DeleteForm from "@/components/posts/DeleteForm.vue";
-import ChangeForm from "@/components/posts/ChangeForm.vue";
+
 import GetPosts from "@/mixins/GetPosts";
-import DeletePost from '@/mixins/DeletePost';
+import Dialog from '@/mixins/Dialog';
 export default {
+  emits: [
+    'remove-post',
+    'change-post',
+    'show-remove-dialog',
+    'show-change-dialog',
+  ],
   props: {
     isShowUser: {
       type: Boolean,
       default: false,
+    },
+    posts: {
+      type: Object,
+      required: true,
     },
     userId: {
       type: Number,
@@ -47,54 +42,17 @@ export default {
   },
   components: {
     PostItem,
-    DeleteForm,
-    ChangeForm,
+    
   },
-  mixins: [GetPosts,DeletePost],
+  mixins: [
+    GetPosts, 
+    Dialog,
+  ],
   data() {
     return {
-      posts: [],
-      isShowDialog: false,
-      typeDialog: "",
-      idDeletingPost: undefined,
-      changesPost: {},
+      
     }
   },
-  methods: {
-    hideDialog() {
-      this.isShowDialog = false;
-    },
-    showRemoveDialog(id) {
-      this.typeDialog = "delete"
-      this.idDeletingPost = id;
-      this.showDialog()
-    },
-    showChangeDialog(post) {
-      this.changesPost = post;
-      this.typeDialog = "change"
-      this.showDialog()
-    },
-    async removePost() {
-      this.posts = await this.deletePost(this.posts, this.idDeletingPost);
-      this.hideDialog();
-    },
-    async changePost(changedPost) {
-      this.posts = this.posts.map(post => {
-        if (post.id != changedPost.id) {
-          return post;
-        } else {
-          return changedPost;
-        }
-      });
-      this.hideDialog();
-    },
-    showDialog() {
-      this.isShowDialog = true;
-    }
-  },
-  async mounted() {
-    this.posts = await this.getPosts(this.userId);
-  }
 }
 
 </script>

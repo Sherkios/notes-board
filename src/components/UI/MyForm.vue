@@ -37,7 +37,6 @@
 
 <style lang="scss" scoped>
   .form {
-    max-width: 408px;
     width: 100%;
 
     display: inline-flex;

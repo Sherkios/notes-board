@@ -4,18 +4,43 @@
       <template #default>Все заметки</template>
     </title-box>
     <div class="notes__posts">
-      <post-list :is-show-user="true"></post-list>
+      <post-list 
+      :is-show-user="true"
+      :posts="posts" 
+      @remove-post="removePost"
+      @change-post="changePost"
+      @show-remove-dialog="showRemoveDialog"
+      @show-change-dialog="showChangeDialog"
+      ></post-list>
     </div>
   </div>
+
+  <my-dialog v-model:is-show="isShowDialog">
+
+    <delete-form v-if="typeDialog == 'delete'"
+    @hide="hideDialog"
+    @removePost="removePost"
+    ></delete-form>
+
+    <change-form v-if="typeDialog == 'change'"
+    @hide="hideDialog"
+    @change-post="changePost"
+    :postEl="changesPost"
+    ></change-form>
+
+</my-dialog>
 </template>
 
 <script>
-import PostList from "@/components/posts/PostList.vue";
-import { mapState, mapActions, mapGetters, mapMutations } from "vuex";
+import NotesPage from '@/mixins/NotesPage';
+
 export default {
-  components: {
-    PostList,
-  },
+  mixins: [
+    NotesPage
+  ],
+  async mounted() {
+    this.posts = await this.getPosts();
+  }
 }
 </script>
 

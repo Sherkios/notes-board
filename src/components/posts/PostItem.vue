@@ -6,8 +6,8 @@
     </div>
     <div class="post__bottom">
       <div class="post__buttons">
-        <div class="post__button post__button_red" @click="$emit('showRemoveDialog', post.id)">Удалить</div>
-        <div class="post__button" @click="$emit('showChangeDialog', post)">Изменить</div>
+        <div class="post__button post__button_red" @click="$emit('show-remove-dialog', post.id)">Удалить</div>
+        <div class="post__button" @click="$emit('show-change-dialog', post)">Изменить</div>
       </div>
       <div class="post__user user" v-if="isShowUser">
         <div class="user__icon">

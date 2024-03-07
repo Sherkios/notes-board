@@ -37,6 +37,11 @@ export default {
     align-items: center;
     justify-content: center;
     background-color: var(--main-dark-60);
+
+    &__content {
+      max-width: 408px;
+      width: 100%;
+    }
   }
 
   .dialog-enter-active,
