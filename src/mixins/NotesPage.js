@@ -18,7 +18,6 @@ export default{
   },
   data() {
     return {
-      typeDialog: "",
       idDeletingPost: undefined,
       changesPost: {},
       posts: {},
@@ -27,18 +26,15 @@ export default{
   methods: {
     
     showRemoveDialog(id) {
-      this.typeDialog = "delete"
       this.idDeletingPost = id;
-      this.showDialog()
+      this.showDialog("delete")
     },
     showChangeDialog(post) {
       this.changesPost = post;
-      this.typeDialog = "change"
-      this.showDialog()
+      this.showDialog("change")
     },
     showNewDialog() {
-      this.typeDialog = "new"
-      this.showDialog()
+      this.showDialog("new")
     },
     async removePost() {
       this.posts = await this.deletePost(this.posts, this.idDeletingPost);
