@@ -26,6 +26,7 @@ import getCoockie from "@/functions/Coockies/GetCookie";
   --white-hover: rgba(225, 225, 225, 1);
   --button-background-color: var(--blue);
   --button-color: var(--white);
+  --green: rgba(0, 142, 48, 1);
 }
 
 

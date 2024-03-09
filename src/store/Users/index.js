@@ -27,6 +27,21 @@ export default {
              
             ]
           }
+          user.optionsRole = {
+            current: "Администратор",
+            currentClass: "blue",
+            option: [
+              {
+                value: "Администратор",
+                class: "blue"
+              },
+              {
+                value: "Пользователь",
+                class: "green",
+              },
+             
+            ]
+          }
         } else {
           user.optionsStatus = {
             current: "Деактивирован",
@@ -39,6 +54,21 @@ export default {
               {
                 value: "Деактивирован",
                 class: "red",
+              },
+             
+            ]
+          }
+          user.optionsRole = {
+            current: "Пользователь",
+            currentClass: "green",
+            option: [
+              {
+                value: "Администратор",
+                class: "blue"
+              },
+              {
+                value: "Пользователь",
+                class: "green",
               },
              
             ]
@@ -62,6 +92,42 @@ export default {
         commit('setUsers', users)
       } catch (error) {
         
+      }
+    },
+
+    async upadateUsers({state, commit}, id = null) {
+      try {
+        let response;
+        console.log("Обновляем пользователя")
+        if (id != null) {
+          let user = state.users.filter(user => user.id == id)[0];
+          response = await axios(`https://dummyjson.com/users/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify({
+              isAdmin: user.isAdmin,
+              optionsStatus: user.optionsStatus,
+              optionsRole: user.optionsRole,
+            }),
+          })
+        } else {
+          for (const key in state.users) {
+            let user = state.users[key];
+
+            response = await axios(`https://dummyjson.com/users/${user.id}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({  
+                isAdmin: user.isAdmin,
+                optionsStatus: user.optionsStatus,
+                optionsRole: user.optionsRole,
+              }),
+            })
+          }
+        }
+        console.log(response);
+
+      } catch (error) {
+        console.log(error);
       }
     }
   },

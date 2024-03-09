@@ -30,12 +30,15 @@ export default {
     options: {
       type: Object,
       required: true,
+    },
+    user: {
+      type: Object,
+      required: true,
     }
   },
   data() {
     return {
       isShowOptions: false,
-      cssCurrentTransition: 'all 0.1s ease'
     }
   },
   methods: {
@@ -44,7 +47,7 @@ export default {
     },
     selectOption(options, className, value) {
       this.isShowOptions = false;
-      this.$emit('change-status', options, className, value);
+      this.$emit('change-status', options, className, value, this.user);
     }
   },
 }
@@ -93,6 +96,9 @@ export default {
     &.blue {
       --color: var(--blue)
     }
+    &.green {
+      --color: var(--green)
+    }
   }
 
   &__options {
@@ -126,6 +132,9 @@ export default {
 
     &.blue {
       --color: var(--blue)
+    }
+    &.green {
+      --color: var(--green)
     }
 
 

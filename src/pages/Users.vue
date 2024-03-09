@@ -47,11 +47,18 @@
           <div class="element__count-note td">{{ user.age + " " + countForm(user.age, ['заметка', 'заметки', 'заметок']) }}</div>
           <div class="element__status td">
             <my-select
+            :user="user"
             :options="user.optionsStatus"
             @change-status="changeStatus"
             ></my-select>
           </div>
-          <div class="element__role td"></div>
+          <div class="element__role td">
+            <my-select
+            :user="user"
+            :options="user.optionsRole"
+            @change-status="changeStatus"
+            ></my-select>
+          </div>
           <div class="element__instrument td">
             <div class="element__delete">
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -98,14 +105,16 @@ export default {
   methods: {
     ...mapActions({
       loadUsers: 'users/loadUsers',
+      upadateUsers: 'users/upadateUsers',
     }),
     getShortName(firstName = "", lastName = "") {
       return firstName.slice(0,1) + lastName.slice(0,1);
     },
-    changeStatus(optionStatus, className, value) {
+    changeStatus(optionStatus, className, value, user) {
       optionStatus.current = value;
       optionStatus.currentClass = className;
-    }
+      this.upadateUsers(user.id)
+    },
   },
   
   mounted() {
