@@ -102,20 +102,27 @@ export default {
       }
     },
 
-    async upadateUsers({state, commit}, id = null) {
+    async upadateUsers({state, commit}, userData) {
       try {
+        console.log(userData);
         let response;
         console.log("Обновляем пользователя")
-        if (id != null) {
-          let user = state.users.filter(user => user.id == id)[0];
-          response = await axios(`https://dummyjson.com/users/${id}`, {
+        if (userData.id != null) {
+          let user = state.users.filter(user => user.id == userData.id)[0];
+          response = await axios(`https://dummyjson.com/users/${userData.id}`, {
             method: 'PUT',
             body: JSON.stringify({
-              isAdmin: user.isAdmin,
-              optionsStatus: user.optionsStatus,
-              optionsRole: user.optionsRole,
+              userData
             }),
           })
+          let users = [...state.users];
+          users.forEach(user => {
+            if (user.id == userData.id) {
+              user = userData;
+            }
+          })
+
+          commit('setUsers', users);
         } else {
           for (const key in state.users) {
             let user = state.users[key];
@@ -146,6 +153,8 @@ export default {
         let users = state.users.filter(user => user.id != id);
         commit('setUsers', users)
       } catch (error) {
+        let users = state.users.filter(user => user.id != id);
+        commit('setUsers', users)
         console.warn(error);
       }
     },
@@ -159,6 +168,10 @@ export default {
             user
           })
         })
+        let users = [...state.users];
+        user.id = Date.now();
+        users.push(user);
+        commit('setUsers', users);
       } catch (error) {
         
       }

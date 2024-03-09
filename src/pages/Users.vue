@@ -2,7 +2,7 @@
   <div class="wrapper users">
     <title-box>
       <template #default>Список пользователей</template>
-      <template #button><my-button>Зарегестрировать пользователя +</my-button></template>
+      <template #button><my-button @click="showDialog">Зарегестрировать пользователя +</my-button></template>
     </title-box>
     
     <div class="users__table table">
@@ -84,24 +84,42 @@
       </div>
     </div>
   </div>
+
+  <my-dialog v-model:is-show="isShowDialog">
+    <add-form
+    v-model="newUser"
+    @hide="hideDialog"
+    @create-user="createUser"></add-form>
+  </my-dialog>
 </template>
 
 <script>
 import CountForm from "@/mixins/CountForm";
+import AddForm from "@/components/users/AddForm.vue";
 import { mapState, mapActions, mapGetters, mapMutations } from "vuex";
+import Dialog from "@/mixins/Dialog";
 
 export default {
+  components: {
+    AddForm
+  },
   data() {
     return {
       choisesUser: {},
+      newUser: {
+        firstName: "test",
+        lastName: "test",
+        gender: 'female',
+      }
     }
   },
   mixins: [
-  CountForm
+  CountForm,
+  Dialog
   ],
   computed: {
     ...mapGetters({
-      users: 'users/getUsers',
+      stateUsers: 'users/getUsers',
     }),
     checkedUser() {
       let check = false;
@@ -122,6 +140,9 @@ export default {
         }
       }
       return full
+    },
+    users() {
+      return this.stateUsers
     }
   },
   methods: {
@@ -129,14 +150,14 @@ export default {
       loadUsers: 'users/loadUsers',
       upadateUsers: 'users/upadateUsers',
       deleteUser: 'users/deleteUser',
+      createUser: 'users/createUser',
     }),
     getShortName(firstName = "", lastName = "") {
       return firstName.slice(0,1) + lastName.slice(0,1);
     },
     changeStatus(optionStatus, className, value, user) {
-      optionStatus.current = value;
-      optionStatus.currentClass = className;
-      this.upadateUsers(user.id)
+      user.gender = (value == 'Деактивирован' || value == 'Пользователь') ? 'female' : 'male';
+      this.upadateUsers(user)
     },
     onDeleteUser(id) {
       this.deleteUser(id);
@@ -172,6 +193,7 @@ export default {
 
 .table {
   border-radius: 8px;
+  padding-bottom: 60px;
   overflow: hidden;
 
   color: var(--white);
