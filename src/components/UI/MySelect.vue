@@ -14,6 +14,7 @@
         v-for="option in options.option"
         class="select__option" 
         :class="option.class"
+        @click="selectOption(options, option.class, option.value)"
         >{{option.value}}</div>
       </div>
     </transition>
@@ -40,6 +41,10 @@ export default {
   methods: {
     clickSelect() {
       this.isShowOptions ? this.isShowOptions = false : this.isShowOptions = true;
+    },
+    selectOption(options, className, value) {
+      this.isShowOptions = false;
+      this.$emit('change-status', options, className, value);
     }
   },
 }
@@ -48,12 +53,12 @@ export default {
 <style lang="scss" scoped>
 
 .select {
+  --color: var(--main-dark);
   position: relative;
 
   &__current {
-    --color: var(--main-dark);
     position: relative;
-    z-index: 2;
+    z-index: 1;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -92,19 +97,38 @@ export default {
 
   &__options {
     position: absolute;
-    top: calc(100% - 14px);
-    padding-top: 14px;
-    z-index: 1;
+    top: calc(100%);
+    z-index: 2;
     width: 100%;
     height: max-content;
     background-color: var(--white);
+    overflow: hidden;
     border-radius: 0 0 16px 16px;
   }
 
   &__option {
-    // --color: var(--main-dark)
-    height: 1.5em;
-    color: var(--main-dark);
+    padding: 4px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color);
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+    &:hover {
+      background-color: var(--white-hover);
+    }
+
+    &.red {
+      --color: var(--red);
+    }
+
+    &.blue {
+      --color: var(--blue)
+    }
+
+
   }
 }
 
@@ -113,7 +137,7 @@ export default {
 
 }
 .options-leave-active {
-  transition: all 0.5s ease;
+  transition: all 0s ease;
 }
 .options-enter-from,
 .options-leave-to {

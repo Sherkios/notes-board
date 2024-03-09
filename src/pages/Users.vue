@@ -47,7 +47,8 @@
           <div class="element__count-note td">{{ user.age + " " + countForm(user.age, ['заметка', 'заметки', 'заметок']) }}</div>
           <div class="element__status td">
             <my-select
-            :options="optionsStatus"
+            :options="user.optionsStatus"
+            @change-status="changeStatus"
             ></my-select>
           </div>
           <div class="element__role td"></div>
@@ -84,21 +85,6 @@ export default {
   data() {
     return {
       choisesUser: {},
-      optionsStatus: {
-        current: "Активированный",
-        currentClass: "blue",
-        option: [
-          {
-            value: "Активированный",
-            class: "blue"
-          },
-          {
-            value: "Деактивирован",
-            class: "red",
-          },
-         
-        ]
-      }
     }
   },
   mixins: [
@@ -115,12 +101,15 @@ export default {
     }),
     getShortName(firstName = "", lastName = "") {
       return firstName.slice(0,1) + lastName.slice(0,1);
+    },
+    changeStatus(optionStatus, className, value) {
+      optionStatus.current = value;
+      optionStatus.currentClass = className;
     }
   },
   
   mounted() {
     this.loadUsers();
-    console.log(this.option)
   }
 }
 </script>
