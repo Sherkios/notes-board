@@ -149,5 +149,19 @@ export default {
         console.warn(error);
       }
     },
+
+    async createUser({state, commit}, user) {
+      try {
+        const response = await axios('https://dummyjson.com/users/add', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user
+          })
+        })
+      } catch (error) {
+        
+      }
+    }
   },
 }

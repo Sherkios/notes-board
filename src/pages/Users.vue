@@ -8,8 +8,8 @@
     <div class="users__table table">
       <div class="table__header">
         <div class="table__first td">
-          <label class="table__th-checkbox checkbox parts">
-            <input type="checkbox">
+          <label class="table__th-checkbox checkbox" :class="{'parts' : !fullCheckedUser}">
+            <input type="checkbox" :checked="checkedUser" @input="setGlobalCheckbox">
 
             <svg class="checkbox__choise" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M11.6663 3.5L5.24967 9.91667L2.33301 7" stroke="#005FF9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -28,10 +28,10 @@
         <div class="table__th td"></div>
       </div>
       <div class="table__body">
-        <div class="table__element element" v-for="user in users" :key="users.id">
+        <div class="table__element element" v-for="user in users" :key="user.id">
           <div class="element__first td">
             <label class="element__checkbox checkbox">
-              <input type="checkbox">
+              <input type="checkbox" v-model="choisesUser[user.id]">
 
               <svg class="checkbox__choise" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M11.6663 3.5L5.24967 9.91667L2.33301 7" stroke="#005FF9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -103,6 +103,26 @@ export default {
     ...mapGetters({
       users: 'users/getUsers',
     }),
+    checkedUser() {
+      let check = false;
+      for (const value of Object.values(this.choisesUser)) {
+        if (value) {
+          check = true;
+        }
+      }
+      return check;
+    },
+    fullCheckedUser() {
+      let full = true;
+      for (const value of Object.values(this.choisesUser)) {
+        if (value && full) {
+          full = true;
+        } else {
+          return false
+        }
+      }
+      return full
+    }
   },
   methods: {
     ...mapActions({
@@ -120,11 +140,23 @@ export default {
     },
     onDeleteUser(id) {
       this.deleteUser(id);
+      delete this.choisesUser[id];
+    },
+    setGlobalCheckbox(e) {
+      for (const key of Object.keys(this.choisesUser)) {
+        this.choisesUser[key] = e.target.checked;
+      }
+    },
+    setChoisesUsers() {
+      for (const key in this.users) {
+        this.choisesUser[this.users[key].id] = (this.choisesUser[this.users[key].id]) ? this.choisesUser[this.users[key].id] : false;
+      }
     }
   },
   
-  mounted() {
-    this.loadUsers();
+  async mounted() {
+    await this.loadUsers();
+    this.setChoisesUsers();
   },
 }
 </script>
