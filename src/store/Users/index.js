@@ -82,6 +82,13 @@ export default {
   mutations: {
     setUsers(state, users) {
       state.users = users;
+    },
+    setIdUser(state, id, user) {
+      for (const key in state.users) {
+        if (state.users[key].id == id) {
+          state.users[key] = user;
+        }
+      }
     }
   },
   actions: {
@@ -129,6 +136,18 @@ export default {
       } catch (error) {
         console.log(error);
       }
-    }
+    },
+
+    async deleteUser({state, commit}, id) {
+      try {
+        const response = await axios(`https://dummyjson.com/users/${id}`, {
+          method: 'DELETE',
+        });
+        let users = state.users.filter(user => user.id != id);
+        commit('setUsers', users)
+      } catch (error) {
+        console.warn(error);
+      }
+    },
   },
 }
