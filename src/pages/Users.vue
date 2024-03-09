@@ -2,7 +2,7 @@
   <div class="wrapper users">
     <title-box>
       <template #default>Список пользователей</template>
-      <template #button><my-button @click="showDialog">Зарегестрировать пользователя +</my-button></template>
+      <template #button><my-button @click="showDialog('add')">Зарегестрировать пользователя +</my-button></template>
     </title-box>
     
     <div class="users__table table">
@@ -67,7 +67,10 @@
                 <path d="M2.5 5.00001H4.16667M4.16667 5.00001H17.5M4.16667 5.00001V16.6667C4.16667 17.1087 4.34226 17.5326 4.65482 17.8452C4.96738 18.1577 5.39131 18.3333 5.83333 18.3333H14.1667C14.6087 18.3333 15.0326 18.1577 15.3452 17.8452C15.6577 17.5326 15.8333 17.1087 15.8333 16.6667V5.00001H4.16667ZM6.66667 5.00001V3.33334C6.66667 2.89131 6.84226 2.46739 7.15482 2.15483C7.46738 1.84227 7.89131 1.66667 8.33333 1.66667H11.6667C12.1087 1.66667 12.5326 1.84227 12.8452 2.15483C13.1577 2.46739 13.3333 2.89131 13.3333 3.33334V5.00001M8.33333 9.16667V14.1667M11.6667 9.16667V14.1667" stroke="#FCFCFC" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </div>
-            <div class="element__redact">
+            <div 
+            class="element__redact"
+            @click="setUpdateUserInDialog(user);showDialog('change')"
+            >
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <g clip-path="url(#clip0_436_466)">
                 <path d="M14.167 2.5C14.3859 2.28113 14.6457 2.10752 14.9317 1.98906C15.2176 1.87061 15.5241 1.80965 15.8337 1.80965C16.1432 1.80965 16.4497 1.87061 16.7357 1.98906C17.0216 2.10752 17.2815 2.28113 17.5003 2.5C17.7192 2.71887 17.8928 2.97871 18.0113 3.26468C18.1297 3.55064 18.1907 3.85714 18.1907 4.16667C18.1907 4.4762 18.1297 4.7827 18.0113 5.06866C17.8928 5.35463 17.7192 5.61447 17.5003 5.83334L6.25033 17.0833L1.66699 18.3333L2.91699 13.75L14.167 2.5Z" stroke="#FCFCFC" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
@@ -87,21 +90,30 @@
 
   <my-dialog v-model:is-show="isShowDialog">
     <add-form
-    v-model="newUser"
+    v-if="typeDialog == 'add'"
     @hide="hideDialog"
     @create-user="createUser"></add-form>
+
+    <change-form
+    v-if="typeDialog == 'change'"
+    v-model:userEl="updateUser"
+    @hide="hideDialog"
+    @update-user="onUpdateUser"></change-form>
   </my-dialog>
+
 </template>
 
 <script>
 import CountForm from "@/mixins/CountForm";
 import AddForm from "@/components/users/AddForm.vue";
+import ChangeForm from "@/components/users/ChangeForm.vue";
 import { mapState, mapActions, mapGetters, mapMutations } from "vuex";
 import Dialog from "@/mixins/Dialog";
 
 export default {
   components: {
-    AddForm
+    AddForm,
+    ChangeForm
   },
   data() {
     return {
@@ -110,7 +122,8 @@ export default {
         firstName: "test",
         lastName: "test",
         gender: 'female',
-      }
+      },
+      updateUser: {},
     }
   },
   mixins: [
@@ -172,6 +185,12 @@ export default {
       for (const key in this.users) {
         this.choisesUser[this.users[key].id] = (this.choisesUser[this.users[key].id]) ? this.choisesUser[this.users[key].id] : false;
       }
+    },
+    setUpdateUserInDialog(user) {
+      this.updateUser = user;
+    },
+    onUpdateUser(user) {
+      this.upadateUsers(user);
     }
   },
   

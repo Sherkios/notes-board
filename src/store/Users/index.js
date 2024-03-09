@@ -116,11 +116,14 @@ export default {
             }),
           })
           let users = [...state.users];
-          users.forEach(user => {
+          users = users.map(user => {
             if (user.id == userData.id) {
               user = userData;
+              console.log(user);
             }
+            return user;
           })
+
 
           commit('setUsers', users);
         } else {
