@@ -104,7 +104,7 @@ export default {
           }
         }
       } catch (error) {
-        console.log(error);
+        // console.log(error);
         if (error.response.data.message == "Invalid credentials") {
           this.errorMessage = "Неверный логин или пароль";
         } else {

@@ -44,14 +44,17 @@ export default {
       try {
         const response = await axios.post('https://dummyjson.com/auth/login', payload);
 
+        console.log(response)
+
         setCookie("token", response.data.token);
-        commit("setFirstName", response.data.firstName);
-        commit("setLastName", response.data.lastName);
-        commit("setEmail", response.data.email);
-        commit("setUserId", response.data.id);
-        commit("setGender", response.data.gender);
+        // commit("setFirstName", response.data.firstName);
+        // commit("setLastName", response.data.lastName);
+        // commit("setEmail", response.data.email);
+        // commit("setUserId", response.data.id);
+        // commit("setGender", response.data.gender);
       } catch (error) {
-        throw error;
+        console.log('Ошибка в сторе',error)
+        // throw error;
       }
     },
 

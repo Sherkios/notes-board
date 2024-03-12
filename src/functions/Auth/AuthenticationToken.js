@@ -3,7 +3,7 @@ import axios from "axios";
 export default async function authenticationToken(token) {
   if (token !== undefined) {
     try {
-      let response = await axios.get("https://dummyjson.com/auth/me", {
+      let response = await axios.get("http://localhost:5000/api/users/checkTocken", {
         headers: {
           'Authorization': `Bearer ${token}`,
         }
