@@ -42,11 +42,11 @@ export default {
   actions: {
     async authorizate({state, commit}, payload) {
       try {
-        const response = await axios.post('https://dummyjson.com/auth/login', payload);
+        const response = await axios.post('http://localhost:5000/api/users/login', payload, {
+          withCredentials: true,
+        });
 
         console.log(response)
-
-        setCookie("token", response.data.token);
         // commit("setFirstName", response.data.firstName);
         // commit("setLastName", response.data.lastName);
         // commit("setEmail", response.data.email);
@@ -60,7 +60,6 @@ export default {
 
     logOut({state, commit}) {
       router.push('/auth');
-      deleteCookie("token");
       commit("setFirstName", '');
       commit("setLastName", '');
       commit("setEmail", '');

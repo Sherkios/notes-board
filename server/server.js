@@ -3,7 +3,8 @@ const morgan = require('morgan');
 const path = require('path');
 const express = require('express');
 const cors = require('cors')
-
+const {secret} = require('./config')
+const cookieParser = require('cookie-parser');
 require('dotenv').config()
 // устанавливаем порт сервера
 const PORT = process.env.PORT || 5000;
@@ -12,8 +13,12 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(morgan('dev'));
-app.use(cors());
-
+app.use(cors({
+  origin: true,
+  credentials: true,
+  exposedHeaders: 'Origin, X-Requested-With, Content-Type, Accept',
+}));
+app.use(cookieParser(secret));
 try {
   mongoose.connect('mongodb+srv://sherkios:notespassword@cluster0.oeciexq.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', { useNewUrlParser: true })
   .then(db => console.log(`DB is connected`))

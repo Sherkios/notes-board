@@ -12,6 +12,8 @@ router.post('/registration', [
   check('lastName', "Имя пользователя не может быть пустым").notEmpty(),
 ], controller.registration);
 
+router.post('/checkToken', controller.checkToken);
+
 router.post('/login', controller.login);
 
 router.get('/', controller.get);
@@ -21,7 +23,6 @@ router.get('/:id', controller.getById);
 router.put('/:id', controller.put);
 
 router.delete('/:id', controller.delete);
-router.post('/checkToken', controller.checkTocken);
 
 
 

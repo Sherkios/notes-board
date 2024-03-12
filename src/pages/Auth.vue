@@ -96,7 +96,6 @@ export default {
             username: this.username,
             password: this.password,
           });
-          console.log(this.$routr);
           if (this.$route.query.redirect) {
             this.$router.push(this.$route.query.redirect);
           } else {

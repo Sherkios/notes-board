@@ -1,20 +1,17 @@
 import store from "@/store";
 import axios from "axios";
 export default async function authenticationToken(token) {
-  if (token !== undefined) {
+  if (true) {
     try {
-      let response = await axios.get("http://localhost:5000/api/users/checkTocken", {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        }
-    });
+      let response = await axios.post("http://localhost:5000/api/users/checkToken",{}, {withCredentials: true});
+      console.log(response);
 
     if (response.status == 200) {
-      store.commit('auth/setFirstName', response.data.firstName);
-      store.commit('auth/setLastName', response.data.lastName);
-      store.commit('auth/setEmail', response.data.email);
-      store.commit('auth/setUserId', response.data.id);
-      store.commit('auth/setGender', response.data.gender);
+      // store.commit('auth/setFirstName', response.data.firstName);
+      // store.commit('auth/setLastName', response.data.lastName);
+      // store.commit('auth/setEmail', response.data.email);
+      // store.commit('auth/setUserId', response.data.id);
+      // store.commit('auth/setGender', response.data.gender);
       return true
     }
     } catch (error) {
