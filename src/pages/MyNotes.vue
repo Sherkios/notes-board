@@ -20,6 +20,7 @@
   <my-dialog v-model:is-show="isShowDialog">
 
     <new-form v-if="typeDialog == 'new'"
+    :prop-user-id="userId"
     @hide="hideDialog"
     @add-post="addPost"
     ></new-form>
@@ -50,10 +51,7 @@ export default {
   },
   mixins: [NotesPage],
   
-  async mounted() {
-    console.log(this.userId)
-    this.posts = await this.getPosts(this.userId);
-  }
+
   
 }
 </script>

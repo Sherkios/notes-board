@@ -6,7 +6,7 @@
     </div>
     <div class="post__bottom">
       <div class="post__buttons">
-        <div class="post__button post__button_red" @click="$emit('show-remove-dialog', post.id)">Удалить</div>
+        <div class="post__button post__button_red" @click="$emit('show-remove-dialog', post._id)">Удалить</div>
         <div class="post__button" @click="$emit('show-change-dialog', post)">Изменить</div>
       </div>
       <div class="post__user user" v-if="isShowUser">
@@ -24,11 +24,9 @@
 </template>
 
 <script>
-import GetUser from '@/mixins/GetUser';
 import { mapState, mapActions, mapGetters, mapMutations } from "vuex";
 
 export default {
-  mixins: [GetUser],
   props: {
     post: {
       type: Object,
@@ -43,6 +41,11 @@ export default {
     return {
       user: {},
     }
+  },
+  methods: {
+    ...mapActions({
+      getUser: "users/getUser"
+    })
   },
   computed: {
     firstName() {
@@ -59,7 +62,7 @@ export default {
     }
   },
   async mounted() {
-    this.user = await this.getUserById(this.post.userId);
+    this.user = await this.post.user;
   }
 }
 

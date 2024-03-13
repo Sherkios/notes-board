@@ -14,11 +14,18 @@
 
 <script>
 export default {
+  props: {
+    propUserId : {
+      type: [String, Number],
+      required: true,
+    }
+  },
   data() {
     return {
       post: {
         title: '',
         body: '',
+        userId: this.propUserId,
       }
       
     }

@@ -3,7 +3,7 @@ const User = require('../models/User');
 class NoteController {
   async get(req, res) {
     try {
-      res.json(await Note.find());
+      res.json(await Note.find().populate('user'));
       
     } catch (error) {
       
@@ -14,11 +14,9 @@ class NoteController {
     try {
       const userId = req.params.id;
       const user = await User.findById(userId).populate('notes');
-      console.log(user);
       if (!user) {
        return res.status(400).json({message: "Не существует пользователя с таким id"})
       }
-      console.log(user.notes);
       res.status(200).json(user.notes);
     } catch (error) {
       console.log(error);
@@ -61,10 +59,12 @@ class NoteController {
 
   async delete(req, res) {
     try {
-      await Note.findByIdAndRemove(req.params.id);
+      const note = await Note.findByIdAndDelete(req.params.id);
+      console.log(note);
+      const user = await User.updateOne({_id: note.user},{$pull: {notes:req.params.id}})
       res.json({state: 'deleted'});
     } catch (error) {
-      
+      console.log(error);
     }
   }
 }

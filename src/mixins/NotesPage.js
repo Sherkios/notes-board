@@ -36,7 +36,8 @@ export default{
       this.showDialog("new")
     },
     async removePost() {
-      this.posts = await this.deletePost(this.posts, this.idDeletingPost);
+      await this.deletePost(this.idDeletingPost)
+      this.posts = await this.getPosts(this.userId)
       this.hideDialog();
     },
     async changePost(changedPost) {
@@ -50,14 +51,15 @@ export default{
       this.hideDialog();
     },
     async addPost(post) {
-      post.id = Date.now();
-      post.userId = this.userId;
-      this.posts.push(post);
+      await this._addPost(post)
+      this.posts = await this.getPosts(this.userId)
       this.hideDialog();
     },
 
     ...mapActions({
       getPosts: "notes/getPosts",
+      _addPost: "notes/addPost",
+      deletePost: "notes/deletePost"
     })
     
   },
@@ -65,5 +67,9 @@ export default{
     ...mapState({
       userId: state => state.auth.userId,
     }),
+  },
+
+  async mounted() {
+    this.posts = await this.getPosts(this.userId)
   }
 }

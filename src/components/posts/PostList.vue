@@ -17,7 +17,6 @@
 import axios from 'axios';
 import PostItem from "@/components/posts/PostItem.vue";
 
-import GetPosts from "@/mixins/GetPosts";
 import Dialog from '@/mixins/Dialog';
 export default {
   emits: [
@@ -45,14 +44,13 @@ export default {
     
   },
   mixins: [
-    GetPosts, 
     Dialog,
   ],
   data() {
     return {
       
     }
-  },
+  }
 }
 
 </script>

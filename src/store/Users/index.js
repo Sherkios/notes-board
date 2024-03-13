@@ -92,6 +92,26 @@ export default {
     }
   },
   actions: {
+    async getUser({state, commit}, id = null) {
+      try {
+        let response;
+        let resultPosts = [];
+        if (id != null) {
+          response = await axios.get(`http://localhost:5000/api/users/${id}`);     
+        } else {
+          response = await axios.get(`http://localhost:5000/api/users/`);          
+        }
+        console.log(response)
+        let posts = response.data;
+        posts.forEach(post => {
+          resultPosts.push(post);
+        })
+        return resultPosts;
+      } catch (error) {
+        console.warn(error)
+        return {};
+      }
+    },
     async loadUsers({state, commit}) {
       try {
         const response = await axios('https://dummyjson.com/users');

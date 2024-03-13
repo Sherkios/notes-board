@@ -4,27 +4,21 @@ import axios from "axios";
 export default {
   namespaced: true,
   state: () => ({
-    posts: {}
   }),
   mutations: {
-    setPosts(state, post) {
-      state.post = post;
-    }
   },
   getters: {
-
   },
   actions: {
     async getPosts({state, commit}, id = null) {
       try {
         let response;
-        let resultPosts = [];     
+        let resultPosts = [];
         if (id != null) {
           response = await axios.get(`http://localhost:5000/api/notes/user/${id}`);     
         } else {
           response = await axios.get(`http://localhost:5000/api/notes/user`);          
         }
-        console.log(response);
         let posts = response.data;
         posts.forEach(post => {
           resultPosts.push(post);
@@ -36,26 +30,27 @@ export default {
       }
     },
 
-    async deletePost(posts, id) {
+    async deletePost({}, id) {
       let resultPosts = [];
       try {
-        const response = await axios.delete(`https://dummyjson.com/posts/${id}`);
-        resultPosts = posts.filter(post => post.id != id);
-        return resultPosts;
+        const response = await axios.delete(`http://localhost:5000/api/notes/${id}`);
       } catch (error) {
-        if (error.response.status == 404) {
-          console.warn("Нет такого id в dummyJson");
-          resultPosts = posts.filter(post => post.id != id);
-          return resultPosts;
-        }
         console.warn(error)
         return null;
+      }
+    },
+    async addPost({state, commit}, post) {
+      try {
+        const response = await axios.post(`http://localhost:5000/api/notes`, {...post})
+        return;
+      } catch (error) {
+        
       }
     },
 
     async updatePost(post, id) {
       try {
-        const response = await axios.put(`https://dummyjson.com/posts/${id}`, post)
+        const response = await axios.put(`http://localhost:5000/api/notes`, {...post})
       } catch (error) {
         
       }
