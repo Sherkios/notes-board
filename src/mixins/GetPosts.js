@@ -7,10 +7,12 @@ export default {
         let response;
         let resultPosts = [];     
         if (id != null) {
-          response = await axios.get(`https://dummyjson.com/posts/user/${id}`);     
+          console.log(id);
+          response = await axios.get(`http://localhost:5000/api/notes/user/${id}`);     
         } else {
-          response = await axios.get(`https://dummyjson.com/posts`);          
+          response = await axios.get(`http://localhost:5000/api/notes/user`);          
         }
+        console.log(response);
         let posts = response.data.posts;
         posts.forEach(post => {
           resultPosts.push(post);

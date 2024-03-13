@@ -1,21 +1,43 @@
 const User = require('../models/User');
 const Role = require('../models/Role');
+const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator')
 const { secret } = require("../config")
 
 
-function generateAccessToken(id, roles, firstName, lastName, email) {
+async function generateAccessToken(id, roles, firstName, lastName, email) {
   const payload = {
     id,
-    roles,
+    roles: await getRoles(roles),
     firstName,
     lastName,
     email
   }
+
   return jwt.sign(payload, secret, { expiresIn: "24h" });
 }
+
+async function getRoles(roles) {
+  const mass = [];
+
+  if (roles) {
+    try {
+      for (const role of roles) {
+        console.log("Все роли", roles , "Одна роль", role, "Значение роли", await Role.findById(role));
+        mass.push((await Role.findById(role)).value)
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    
+  }
+  return mass  
+}
+
+
+
 class UserController {
   async get(req, res) {
     try {
@@ -29,15 +51,19 @@ class UserController {
 
   async getById(req, res) {
     try {
-      const { username, password } = req.body;
-      const user = await User.findOne({ username })
+      // const { username, password } = req.body;
+      // const user = await User.findOne({ username })
+      // if (!user) {
+      //   return res.status(400).json({ message: `Пользователь ${username} не найден` });
+      // }
+      const user = await User.findById(req.params.id);
       if (!user) {
-        return res.status(400).json({ message: `Пользователь ${username} не найден` });
+        return res.status(400).json({ message: `Пользователь c id: ${req.params.id} не найден` });
       }
-      res.json(await User.findById(req.params.id));
+      res.json(user);
     } catch (error) {
       console.log(error);
-      res.status(400).json({ message: 'Get error' })
+      res.status(400).json({ message: 'Пользователь не найден' })
     }
   }
 
@@ -82,7 +108,8 @@ class UserController {
       if (!validPassword) {
         return res.status(400).json({ message: `Введен не верный пароль` });
       }
-      const token = generateAccessToken(
+      
+      const token = await generateAccessToken(
         user._id,
         user.roles,
         user.firstName,
@@ -91,18 +118,33 @@ class UserController {
       );
       res.cookie('token', token, {
         httpOnly: true,
-        sameSite: 'strict',
+        secure: true,
+        sameSite: 'lax',
       });
-      return res.json();
+
+      const decodedData = jwt.verify(token, secret);
+      return res.json(decodedData);
 
     } catch (error) {
       console.log(error);
       res.status(400).json({ message: 'Login error' })
     }
   }
+
+  async logout(req,res) {
+    try {
+      res.clearCookie('token', {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'lax',
+      });
+      return res.send();
+    } catch (error) {
+      
+    }
+  }
   async registration(req, res) {
     try {
-
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         return res.status(400).json({ message: "Ошибки при регистрации", errors })
@@ -120,7 +162,7 @@ class UserController {
       const user = new User({
         username,
         password: hashPassword,
-        roles: [userRole.value],
+        roles: [userRole],
         firstName,
         lastName
       });
@@ -139,13 +181,14 @@ class UserController {
         return res.status(403).json({ message: "Пользователь не авторизован" })
       }
       const decodedData = jwt.verify(token, secret);
-      console.log(decodedData);
       res.json(decodedData);
     } catch (error) {
       console.log(error);
       return res.status(403).json({ message: "Пользователь не авторизован" })
     }
   }
+
+  
 }
 
 module.exports = new UserController();

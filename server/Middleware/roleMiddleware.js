@@ -15,7 +15,6 @@ module.exports = function (roles) {
 
       let hasRole = false;
       userRoles.forEach(role => {
-        console.log(roles, role)
         if (roles.includes(role)) {
           hasRole = true;
         }

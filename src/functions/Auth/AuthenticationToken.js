@@ -1,17 +1,17 @@
 import store from "@/store";
 import axios from "axios";
-export default async function authenticationToken(token) {
-  if (true) {
+export default async function authenticationToken() {
     try {
       let response = await axios.post("http://localhost:5000/api/users/checkToken",{}, {withCredentials: true});
-      console.log(response);
 
     if (response.status == 200) {
-      // store.commit('auth/setFirstName', response.data.firstName);
-      // store.commit('auth/setLastName', response.data.lastName);
-      // store.commit('auth/setEmail', response.data.email);
-      // store.commit('auth/setUserId', response.data.id);
-      // store.commit('auth/setGender', response.data.gender);
+      store.commit('auth/setFirstName', response.data.firstName);
+      store.commit('auth/setLastName', response.data.lastName);
+      store.commit('auth/setEmail', response.data.email);
+      store.commit('auth/setUserId', response.data.id);
+      response.data.roles.forEach(role => {
+        store.commit("auth/setRole", role);
+      });
       return true
     }
     } catch (error) {
@@ -31,8 +31,5 @@ export default async function authenticationToken(token) {
         console.log('Error', error.message);
       }
     }
-    
-  } else {
     return false
-  }
 }

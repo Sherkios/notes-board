@@ -9,7 +9,7 @@ const User = new Schema({
   lastName: {type:String, required: true},
   email: String,
   notes: [{type: ObjectId, ref: 'notes'}],
-  roles: [{type: String, ref: 'roles'}]
+  roles: [{type: ObjectId, ref: 'roles'}]
 })
 
 module.exports = model('users', User);

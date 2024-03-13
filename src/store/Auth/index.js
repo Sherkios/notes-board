@@ -9,7 +9,7 @@ export default {
     lastName: '',
     email: '',
     userId: null,
-    gender: '',
+    role: [],
   }),
   mutations: {
     setFirstName(state, firstName) {
@@ -24,8 +24,15 @@ export default {
     setUserId(state, userId) {
       state.userId = userId;
     },
-    setGender(state, gender) {
-      state.gender = gender;
+    setRole(state, role) {
+      if (role.length == 0) {
+        state.role = [];
+      } else {
+        if (!state.role.includes(role)) {
+          state.role.push(role)
+        }
+      }
+      
     },
   },
   getters: {
@@ -36,7 +43,7 @@ export default {
       return state.firstName.slice(0,1) + state.lastName.slice(0,1);
     },
     isAdmin(state) {
-      return state.gender == 'male'
+      return state.role.includes('admin');
     }
   },
   actions: {
@@ -45,26 +52,29 @@ export default {
         const response = await axios.post('http://localhost:5000/api/users/login', payload, {
           withCredentials: true,
         });
-
-        console.log(response)
-        // commit("setFirstName", response.data.firstName);
-        // commit("setLastName", response.data.lastName);
-        // commit("setEmail", response.data.email);
-        // commit("setUserId", response.data.id);
-        // commit("setGender", response.data.gender);
+        commit("setFirstName", response.data.firstName);
+        commit("setLastName", response.data.lastName);
+        commit("setEmail", response.data.email);
+        commit("setUserId", response.data.id);
+        response.data.roles.forEach(role => {
+          commit("setRole", role);
+        });
       } catch (error) {
         console.log('Ошибка в сторе',error)
         // throw error;
       }
     },
 
-    logOut({state, commit}) {
+    async logOut({state, commit}) {
+      const response = await axios.get('http://localhost:5000/api/users/logout', {
+          withCredentials: true,
+        });
       router.push('/auth');
       commit("setFirstName", '');
       commit("setLastName", '');
       commit("setEmail", '');
       commit("setUserId", '');
-      commit("setGender", '');
+      commit("setRole", []);
     },
   }
 }

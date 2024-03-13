@@ -5,11 +5,10 @@ import ChangeForm from "@/components/posts/ChangeForm.vue";
 import DeletePost from '@/mixins/DeletePost';
 import Dialog from "@/mixins/Dialog";
 import PostList from "@/components/posts/PostList.vue";
-import GetPosts from "@/mixins/GetPosts";
 export default{
   props: {
   },
-  mixins: [Dialog,  GetPosts, DeletePost],
+  mixins: [Dialog,  DeletePost],
   components: {
     PostList,
     NewForm,
@@ -55,7 +54,11 @@ export default{
       post.userId = this.userId;
       this.posts.push(post);
       this.hideDialog();
-    }
+    },
+
+    ...mapActions({
+      getPosts: "notes/getPosts",
+    })
     
   },
   computed: {

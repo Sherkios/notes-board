@@ -36,7 +36,7 @@ export default {
       required: true,
     },
     userId: {
-      type: Number,
+      type: [Number, String],
       default: null,
     }
   },

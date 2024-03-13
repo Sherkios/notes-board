@@ -15,6 +15,7 @@ router.post('/registration', [
 router.post('/checkToken', controller.checkToken);
 
 router.post('/login', controller.login);
+router.get('/logout', controller.logout);
 
 router.get('/', controller.get);
 

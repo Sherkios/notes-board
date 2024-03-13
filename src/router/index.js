@@ -68,8 +68,7 @@ router.beforeEach(async (to, from, next) => {
     if (to.matched.some(record => record.meta.authRequired)) {
       // этот путь требует авторизации, проверяем залогинен ли
       // пользователь, и если нет, перенаправляем на страницу логина
-      let token = getCookie('token');
-      if (!(await authenticationToken(token))) {
+      if (!(await authenticationToken())) {
         next({
           path: '/auth',
           query: { redirect: to.fullPath }

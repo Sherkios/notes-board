@@ -5,7 +5,7 @@ const ObjectId = Schema.Types.ObjectId
 const Notes = new Schema({
   title: String,
   body: String,
-  notes: {type: ObjectId, ref: 'users'}
+  user: {type: ObjectId, ref: 'users'}
 })
 
 module.exports = mongoose.model('notes', Notes);
