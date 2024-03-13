@@ -25,7 +25,6 @@ async function getRoles(roles) {
   if (roles) {
     try {
       for (const role of roles) {
-        console.log("Все роли", roles , "Одна роль", role, "Значение роли", await Role.findById(role));
         mass.push((await Role.findById(role)).value)
       }
     } catch (error) {

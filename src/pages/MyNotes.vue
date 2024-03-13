@@ -51,7 +51,9 @@ export default {
   },
   mixins: [NotesPage],
   
-
+  async mounted() {
+    this.posts = await this.getPosts(this.userId)
+  }
   
 }
 </script>

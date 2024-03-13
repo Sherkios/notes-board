@@ -37,7 +37,7 @@ export default{
     },
     async removePost() {
       await this.deletePost(this.idDeletingPost)
-      this.posts = await this.getPosts(this.userId)
+      this.posts = this.posts.filter(post => post._id != this.idDeletingPost);
       this.hideDialog();
     },
     async changePost(changedPost) {
@@ -69,7 +69,5 @@ export default{
     }),
   },
 
-  async mounted() {
-    this.posts = await this.getPosts(this.userId)
-  }
+  
 }
