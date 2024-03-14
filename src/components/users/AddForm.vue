@@ -4,7 +4,7 @@
     <template #inputs>
       <my-input v-model="newUser.firstName" placeholder="Имя">Имя</my-input>
       <my-input v-model="newUser.lastName" placeholder="Фамилия">Фамилия</my-input>
-      <my-input v-model="newUser.gender" placeholder="Пол">Пол</my-input>
+      <my-input v-model="newUser.username" placeholder="Логин">Логин</my-input>
       <my-input v-model="newUser.password" type="password" placeholder="Пароль">Пароль</my-input>
       <my-input v-model="newUser.secPassword" type="password" placeholder="Повторите пароль">Пароль</my-input>
     </template>
@@ -31,7 +31,7 @@ export default {
       newUser: {
         firstName: "",
         lastName: "",
-        gender: "",
+        username: "",
         password: "",
         secPassword: "",
       },

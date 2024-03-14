@@ -80,16 +80,6 @@ export default {
     }
   },
   mutations: {
-    setUsers(state, users) {
-      state.users = users;
-    },
-    setIdUser(state, id, user) {
-      for (const key in state.users) {
-        if (state.users[key].id == id) {
-          state.users[key] = user;
-        }
-      }
-    }
   },
   actions: {
     async getUser({state, commit}, id = null) {
@@ -99,7 +89,7 @@ export default {
         if (id != null) {
           response = await axios.get(`http://localhost:5000/api/users/${id}`);     
         } else {
-          response = await axios.get(`http://localhost:5000/api/users/`);          
+          response = await axios.get(`http://localhost:5000/api/users/`);     
         }
         console.log(response)
         let posts = response.data;
@@ -112,54 +102,13 @@ export default {
         return {};
       }
     },
-    async loadUsers({state, commit}) {
-      try {
-        const response = await axios('https://dummyjson.com/users');
-        let users = response.data.users;
-        commit('setUsers', users)
-      } catch (error) {
-        
-      }
-    },
 
     async upadateUsers({state, commit}, userData) {
       try {
-        console.log(userData);
         let response;
-        console.log("Обновляем пользователя")
-        if (userData.id != null) {
-          let user = state.users.filter(user => user.id == userData.id)[0];
-          response = await axios(`https://dummyjson.com/users/${userData.id}`, {
-            method: 'PUT',
-            body: JSON.stringify({
-              userData
-            }),
-          })
-          let users = [...state.users];
-          users = users.map(user => {
-            if (user.id == userData.id) {
-              user = userData;
-              console.log(user);
-            }
-            return user;
-          })
-
-
-          commit('setUsers', users);
-        } else {
-          for (const key in state.users) {
-            let user = state.users[key];
-
-            response = await axios(`https://dummyjson.com/users/${user.id}`, {
-              method: 'PUT',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({  
-                isAdmin: user.isAdmin,
-                optionsStatus: user.optionsStatus,
-                optionsRole: user.optionsRole,
-              }),
-            })
-          }
+        if (userData._id != null) {
+          response = await axios.put(`http://localhost:5000/api/users/${userData._id}`, {...userData});
+          
         }
         console.log(response);
 
@@ -184,17 +133,8 @@ export default {
 
     async createUser({state, commit}, user) {
       try {
-        const response = await axios('https://dummyjson.com/users/add', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            user
-          })
-        })
-        let users = [...state.users];
-        user.id = Date.now();
-        users.push(user);
-        commit('setUsers', users);
+        let {username, password, firstName, lastName} = user;
+        const response = await axios.post('http://localhost:5000/api/users/registration', {username, password, firstName,lastName});
       } catch (error) {
         
       }

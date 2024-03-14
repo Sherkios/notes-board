@@ -42,9 +42,10 @@ export default{
     },
     async changePost(changedPost) {
       this.posts = this.posts.map(post => {
-        if (post.id != changedPost.id) {
+        if (post._id != changedPost._id) {
           return post;
         } else {
+          this.updatePost(changedPost)
           return changedPost;
         }
       });
@@ -59,7 +60,8 @@ export default{
     ...mapActions({
       getPosts: "notes/getPosts",
       _addPost: "notes/addPost",
-      deletePost: "notes/deletePost"
+      deletePost: "notes/deletePost",
+      updatePost: "notes/updatePost",
     })
     
   },

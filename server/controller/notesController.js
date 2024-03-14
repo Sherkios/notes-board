@@ -3,10 +3,16 @@ const User = require('../models/User');
 class NoteController {
   async get(req, res) {
     try {
-      res.json(await Note.find().populate('user'));
+      const note = await Note.find().populate('user');
+      // Сортировка по возрастанию id
+      note.sort((a,b) => {
+      return String(a.user._id).localeCompare(String(b.user._id));
+      })
+
+      res.json(note);
       
     } catch (error) {
-      
+      console.log(error)
     }
   }
 

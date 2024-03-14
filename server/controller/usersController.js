@@ -35,12 +35,40 @@ async function getRoles(roles) {
   return mass  
 }
 
+async function getIdRoleByValue(value) {
+  if (value == "Администратор") {
+    return "65f00c5fdb779b5a865b4465"
+  } else {
+    return "65f00c5fdb779b5a865b4464"
+  }
+}
+
+async function includeRoleById(roleId, roles) {
+  let isExist = false;
+  roles.forEach(objectRole => {
+  if ((typeof objectRole == "object") && objectRole !== null) {
+    console.log(objectRole, roleId)
+    if (objectRole.hasOwnProperty("_id")) {
+      if (objectRole._id == roleId) {
+        isExist = true;
+      }
+    }
+      if (objectRole == roleId) {
+        isExist = true;
+      }
+    }
+  });
+
+  return isExist;
+}
+
 
 
 class UserController {
   async get(req, res) {
     try {
-      res.json(await User.find());
+      const users = await User.find({}, '-password -username').populate('roles');
+      res.json(users);
 
     } catch (error) {
       console.log(error);
@@ -55,7 +83,7 @@ class UserController {
       // if (!user) {
       //   return res.status(400).json({ message: `Пользователь ${username} не найден` });
       // }
-      const user = await User.findById(req.params.id);
+      const user = await User.findById(req.params.id).populate('roles');
       if (!user) {
         return res.status(400).json({ message: `Пользователь c id: ${req.params.id} не найден` });
       }
@@ -68,12 +96,27 @@ class UserController {
 
   async put(req, res) {
     try {
-      const { username, password } = req.body;
-      const user = await User.findOne({ username })
+      const {_id} = req.body;
+      const outUser = {...req.body};
+      const valueRole = req.body?.optionsRole.current;
+      const optionRole = await Role.findById(await getIdRoleByValue(valueRole));
+      const user = await User.findOne({ _id });
       if (!user) {
         return res.status(400).json({ message: `Пользователь ${username} не найден` });
       }
-      await User.findByIdAndUpdate(req.params.id, req.body);
+      // console.log(outUser);
+      if (valueRole == "Администратор") {
+        console.log((await includeRoleById(optionRole, user.roles)));
+        if (!(await includeRoleById(optionRole, user.roles))) {
+          outUser.roles.push(await Role.findById(optionRole));
+        };
+        // await User.findByIdAndUpdate(req.params.id, outUser);
+      } else {
+        await User.findByIdAndUpdate(req.params.id, {...outUser, $pull: {optionRole}});
+
+      }
+
+      // console.log(outUser);
       res.json({ state: 'updated' });
     } catch (error) {
       console.log(error);

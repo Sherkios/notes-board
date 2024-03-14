@@ -48,9 +48,9 @@ export default {
       }
     },
 
-    async updatePost(post, id) {
+    async updatePost({}, post) {
       try {
-        const response = await axios.put(`http://localhost:5000/api/notes`, {...post})
+        const response = await axios.put(`http://localhost:5000/api/notes/${post._id}`, {...post})
       } catch (error) {
         
       }

@@ -5,7 +5,7 @@
       <template #button><my-button @click="showDialog('add')">Зарегестрировать пользователя +</my-button></template>
     </title-box>
     
-    <div class="users__table table">
+    <div class="users__table table" v-if="users.length > 0">
       <div class="table__header">
         <div class="table__first td">
           <label class="table__th-checkbox checkbox" :class="{'parts' : !fullCheckedUser}">
@@ -31,7 +31,7 @@
         <div class="table__element element" v-for="user in users" :key="user.id">
           <div class="element__first td">
             <label class="element__checkbox checkbox">
-              <input type="checkbox" v-model="choisesUser[user.id]">
+              <input type="checkbox" v-model="choisesUser[user._id]">
 
               <svg class="checkbox__choise" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M11.6663 3.5L5.24967 9.91667L2.33301 7" stroke="#005FF9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -44,13 +44,13 @@
             </div>
             <div class="element__name">{{ user.firstName + " " + user.lastName }}</div>
           </div>
-          <div class="element__count-note td">{{ user.age + " " + countForm(user.age, ['заметка', 'заметки', 'заметок']) }}</div>
+          <div class="element__count-note td">{{ user.notes.length + " " + countForm(user.notes.length, ['заметка', 'заметки', 'заметок']) }}</div>
           <div class="element__status td">
-            <my-select
+            <!-- <my-select
             :user="user"
             :options="user.optionsStatus"
             @change-status="changeStatus"
-            ></my-select>
+            ></my-select> -->
           </div>
           <div class="element__role td">
             <my-select
@@ -123,6 +123,7 @@ export default {
         lastName: "test",
         gender: 'female',
       },
+      users: {},
       updateUser: {},
     }
   },
@@ -154,13 +155,10 @@ export default {
       }
       return full
     },
-    users() {
-      return this.stateUsers
-    }
   },
   methods: {
     ...mapActions({
-      loadUsers: 'users/loadUsers',
+      getUsers: 'users/getUser',
       upadateUsers: 'users/upadateUsers',
       deleteUser: 'users/deleteUser',
       createUser: 'users/createUser',
@@ -168,8 +166,10 @@ export default {
     getShortName(firstName = "", lastName = "") {
       return firstName.slice(0,1) + lastName.slice(0,1);
     },
-    changeStatus(optionStatus, className, value, user) {
-      user.gender = (value == 'Деактивирован' || value == 'Пользователь') ? 'female' : 'male';
+    changeStatus(option, className, value, user) {
+      option.current = value;
+      option.currentClass= className;
+      console.log(option, user)
       this.upadateUsers(user)
     },
     onDeleteUser(id) {
@@ -183,8 +183,41 @@ export default {
     },
     setChoisesUsers() {
       for (const key in this.users) {
-        this.choisesUser[this.users[key].id] = (this.choisesUser[this.users[key].id]) ? this.choisesUser[this.users[key].id] : false;
+        this.choisesUser[this.users[key]._id] = (this.choisesUser[this.users[key]._id]) ? this.choisesUser[this.users[key]._id] : false;
       }
+    },
+    setOptionsRole() {
+      for (const user of this.users) {
+        let role = 'Пользователь';
+        let color = 'green'
+
+        // console.log(user);
+        for (const userRole of user.roles) {
+        // console.log(userRole);
+          if (userRole.value == 'admin') {
+            role = "Администратор";
+            color = "blue";
+          }
+        }
+
+
+      user.optionsRole = {
+          current: role,
+          currentClass: color,
+          option: [
+            {
+              value: "Администратор",
+              class: "blue"
+            },
+            {
+              value: "Пользователь",
+              class: "green",
+            },
+            
+          ]
+        }
+      }
+
     },
     setUpdateUserInDialog(user) {
       this.updateUser = user;
@@ -195,8 +228,9 @@ export default {
   },
   
   async mounted() {
-    await this.loadUsers();
+    this.users = await this.getUsers();
     this.setChoisesUsers();
+    this.setOptionsRole();
   },
 }
 </script>
