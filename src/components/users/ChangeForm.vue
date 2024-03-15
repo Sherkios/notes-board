@@ -1,6 +1,6 @@
 <template>
   <my-form>
-    <template #default>Изменить пользователя {{ user.id }}</template>
+    <template #default>Изменить пользователя {{ userEl.firstName + userEl.lastName }}</template>
     <template #inputs>
       <my-input v-model="user.firstName" placeholder="Имя">Имя</my-input>
       <my-input v-model="user.lastName" placeholder="Фамилия">Фамилия</my-input>
@@ -23,7 +23,10 @@ export default {
   },
   data() {
     return {
-      user: {...this.userEl},
+      user: {
+        ...this.userEl,
+        password: "",
+      },
     }
   },
 }

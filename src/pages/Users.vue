@@ -46,11 +46,11 @@
           </div>
           <div class="element__count-note td">{{ user.notes.length + " " + countForm(user.notes.length, ['заметка', 'заметки', 'заметок']) }}</div>
           <div class="element__status td">
-            <!-- <my-select
+            <my-select
             :user="user"
             :options="user.optionsStatus"
             @change-status="changeStatus"
-            ></my-select> -->
+            ></my-select>
           </div>
           <div class="element__role td">
             <my-select
@@ -62,7 +62,7 @@
           <div class="element__instrument td">
             <div 
             class="element__delete"
-            @click="onDeleteUser(user.id)">
+            @click="onDeleteUser(user._id)">
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M2.5 5.00001H4.16667M4.16667 5.00001H17.5M4.16667 5.00001V16.6667C4.16667 17.1087 4.34226 17.5326 4.65482 17.8452C4.96738 18.1577 5.39131 18.3333 5.83333 18.3333H14.1667C14.6087 18.3333 15.0326 18.1577 15.3452 17.8452C15.6577 17.5326 15.8333 17.1087 15.8333 16.6667V5.00001H4.16667ZM6.66667 5.00001V3.33334C6.66667 2.89131 6.84226 2.46739 7.15482 2.15483C7.46738 1.84227 7.89131 1.66667 8.33333 1.66667H11.6667C12.1087 1.66667 12.5326 1.84227 12.8452 2.15483C13.1577 2.46739 13.3333 2.89131 13.3333 3.33334V5.00001M8.33333 9.16667V14.1667M11.6667 9.16667V14.1667" stroke="#FCFCFC" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
@@ -161,19 +161,37 @@ export default {
       getUsers: 'users/getUser',
       upadateUsers: 'users/upadateUsers',
       deleteUser: 'users/deleteUser',
-      createUser: 'users/createUser',
+      _createUser: 'users/createUser',
     }),
+    async createUser(user) {
+      const response = await this._createUser(user);
+      if (response?.status == 200) {
+        this.users.push(response.data)
+        this.setDefaultOptions();
+      };
+    },
     getShortName(firstName = "", lastName = "") {
       return firstName.slice(0,1) + lastName.slice(0,1);
     },
-    changeStatus(option, className, value, user) {
+    async changeStatus(option, className, value, user) {
+      const befCur = option.current;
+      const befCurCl = option.currentClass;
       option.current = value;
       option.currentClass= className;
-      console.log(option, user)
-      this.upadateUsers(user)
+      const response = await this.upadateUsers(user);
+
+      console.log(response)
+
+      if (response.status != 200) {
+        option.current = befCur;
+        option.currentClass = befCurCl;
+      }
     },
-    onDeleteUser(id) {
-      this.deleteUser(id);
+    async onDeleteUser(id) {
+      const response = await this.deleteUser(id);
+      if (response.status == 200) {
+        this.users = this.users.filter(user => user._id != response.data._id);
+      }
       delete this.choisesUser[id];
     },
     setGlobalCheckbox(e) {
@@ -186,14 +204,16 @@ export default {
         this.choisesUser[this.users[key]._id] = (this.choisesUser[this.users[key]._id]) ? this.choisesUser[this.users[key]._id] : false;
       }
     },
+    setDefaultOptions() {
+      this.setOptionsRole();
+      this.setOptionsStatus();
+    },
     setOptionsRole() {
       for (const user of this.users) {
         let role = 'Пользователь';
         let color = 'green'
 
-        // console.log(user);
         for (const userRole of user.roles) {
-        // console.log(userRole);
           if (userRole.value == 'admin') {
             role = "Администратор";
             color = "blue";
@@ -219,18 +239,46 @@ export default {
       }
 
     },
+    setOptionsStatus() {
+      for (const user of this.users) {
+        let role = 'Активирован';
+        let color = 'green'
+
+        if (user.isActive != true) {
+          role = "Деактивирован";
+          color = "red";
+        }
+
+
+      user.optionsStatus = {
+          current: role,
+          currentClass: color,
+          option: [
+            {
+              value: "Активирован",
+              class: "green"
+            },
+            {
+              value: "Деактивирован",
+              class: "red",
+            },
+            
+          ]
+        }
+      }
+    },
     setUpdateUserInDialog(user) {
       this.updateUser = user;
     },
-    onUpdateUser(user) {
-      this.upadateUsers(user);
+    async onUpdateUser(user) {
+      const response = await this.upadateUsers(user);
     }
   },
   
   async mounted() {
     this.users = await this.getUsers();
     this.setChoisesUsers();
-    this.setOptionsRole();
+    this.setDefaultOptions();
   },
 }
 </script>

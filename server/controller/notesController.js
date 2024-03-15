@@ -66,7 +66,6 @@ class NoteController {
   async delete(req, res) {
     try {
       const note = await Note.findByIdAndDelete(req.params.id);
-      console.log(note);
       const user = await User.updateOne({_id: note.user},{$pull: {notes:req.params.id}})
       res.json({state: 'deleted'});
     } catch (error) {

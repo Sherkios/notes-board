@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {check} = require("express-validator")
 const controller = require('../controller/usersController')
-const authMiddleware = require('../Middleware/authMiddleware')
+const mainUserMiddleware = require('../Middleware/mainUserMiddleware')
 const roleMiddleware = require('../Middleware/roleMiddleware')
 
 router.post('/registration', [
@@ -21,9 +21,9 @@ router.get('/', controller.get);
 
 router.get('/:id', controller.getById);
 
-router.put('/:id', controller.put);
+router.put('/:id', [mainUserMiddleware], controller.put);
 
-router.delete('/:id', controller.delete);
+router.delete('/:id', [mainUserMiddleware], controller.delete);
 
 
 

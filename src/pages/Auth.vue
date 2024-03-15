@@ -92,19 +92,22 @@ export default {
 
       try {
         if (this.getHasLogin()) {
-          await this.authorizate({
+          const response = await this.authorizate({
             username: this.username,
             password: this.password,
           });
-          if (this.$route.query.redirect) {
-            this.$router.push(this.$route.query.redirect);
-          } else {
-            this.$router.push("/");
+          if (response.status == 200) {
+            if (this.$route.query.redirect) {
+              this.$router.push(this.$route.query.redirect);
+            } else {
+              this.$router.push("/");
+            }
           }
+          
         }
       } catch (error) {
-        // console.log(error);
-        if (error.response.data.message == "Invalid credentials") {
+        console.log(error);
+        if (error.data.message == "Invalid credentials") {
           this.errorMessage = "Неверный логин или пароль";
         } else {
           this.errorMessage = error.response.data.message;

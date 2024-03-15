@@ -91,7 +91,6 @@ export default {
         } else {
           response = await axios.get(`http://localhost:5000/api/users/`);     
         }
-        console.log(response)
         let posts = response.data;
         posts.forEach(post => {
           resultPosts.push(post);
@@ -106,28 +105,28 @@ export default {
     async upadateUsers({state, commit}, userData) {
       try {
         let response;
+        console.log(userData);
         if (userData._id != null) {
           response = await axios.put(`http://localhost:5000/api/users/${userData._id}`, {...userData});
           
         }
-        console.log(response);
-
+        return response;
+        
       } catch (error) {
+        if (error.response.status == 405) {
+          return error.response
+        }
         console.log(error);
       }
     },
 
     async deleteUser({state, commit}, id) {
       try {
-        const response = await axios(`https://dummyjson.com/users/${id}`, {
-          method: 'DELETE',
-        });
-        let users = state.users.filter(user => user.id != id);
-        commit('setUsers', users)
+        // console.log(id);
+        const response = await axios.delete(`http://localhost:5000/api/users/${id}`);
+        return response;
       } catch (error) {
-        let users = state.users.filter(user => user.id != id);
-        commit('setUsers', users)
-        console.warn(error);
+        return error;
       }
     },
 
@@ -135,8 +134,9 @@ export default {
       try {
         let {username, password, firstName, lastName} = user;
         const response = await axios.post('http://localhost:5000/api/users/registration', {username, password, firstName,lastName});
+        return response;
       } catch (error) {
-        
+        return error;
       }
     }
   },

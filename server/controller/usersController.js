@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const Note = require('../models/Note');
 const Role = require('../models/Role');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
@@ -62,6 +63,25 @@ async function includeRoleById(roleId, roles) {
   return isExist;
 }
 
+async function deleteNotes(notes) {
+  
+  if (notes.length == 0 ) return
+  console.log(notes);
+  let mass = []
+  for (const note of notes) {
+    let method = {
+      deleteOne: {
+        "filter": await Note.findById(String(note)),
+      }
+    }
+    mass.push(method);
+  }
+
+  if (mass.length > 0) {
+    console.log(mass);
+    await Note.bulkWrite(mass);
+  }
+}
 
 
 class UserController {
@@ -99,24 +119,34 @@ class UserController {
       const {_id} = req.body;
       const outUser = {...req.body};
       const valueRole = req.body?.optionsRole.current;
+      const valueActivateStatus = req.body?.optionsStatus.current;
       const optionRole = await Role.findById(await getIdRoleByValue(valueRole));
       const user = await User.findOne({ _id });
       if (!user) {
         return res.status(400).json({ message: `Пользователь ${username} не найден` });
       }
-      // console.log(outUser);
-      if (valueRole == "Администратор") {
-        console.log((await includeRoleById(optionRole, user.roles)));
-        if (!(await includeRoleById(optionRole, user.roles))) {
-          outUser.roles.push(await Role.findById(optionRole));
-        };
-        // await User.findByIdAndUpdate(req.params.id, outUser);
-      } else {
-        await User.findByIdAndUpdate(req.params.id, {...outUser, $pull: {optionRole}});
 
+      if (valueActivateStatus) {
+        switch (valueActivateStatus) {
+          case "Активирован":
+              outUser.isActive = true;
+            break;
+          case "Деактивирован":
+              outUser.isActive = false;
+            break;
+        
+          default:
+            break;
+        }
       }
 
-      // console.log(outUser);
+      if (outUser.password) {
+        const hashPassword = bcrypt.hashSync(outUser.password, 7);
+        outUser.password = hashPassword;
+      }
+
+      outUser.roles = [optionRole];
+      await User.findByIdAndUpdate(req.params.id, outUser);
       res.json({ state: 'updated' });
     } catch (error) {
       console.log(error);
@@ -126,16 +156,13 @@ class UserController {
 
   async delete(req, res) {
     try {
-      const { username, password } = req.body;
-      const user = await User.findOne({ username })
-      if (!user) {
-        return res.status(400).json({ message: `Пользователь ${username} не найден` });
-      }
-      await User.findByIdAndDelete(req.params.id);
-      res.json({ state: 'deleted' });
+      const user = await User.findByIdAndDelete(req.params.id);
+      // const user = await User.findById(req.params.id);
+      await deleteNotes(user.notes);
+      res.json(user);
     } catch (error) {
       console.log(error);
-      res.status(400).json({ message: 'Delete error' })
+      res.status(400).json({ message: 'Пользователь с таким id не найден' })
     }
   }
 
@@ -149,6 +176,10 @@ class UserController {
       const validPassword = bcrypt.compareSync(password, user.password);
       if (!validPassword) {
         return res.status(400).json({ message: `Введен не верный пароль` });
+      }
+
+      if (!user.isActive) {
+        return res.status(400).json({ message: `Пользователь не активен` });
       }
       
       const token = await generateAccessToken(
@@ -209,7 +240,7 @@ class UserController {
         lastName
       });
       await user.save();
-      return res.json({ message: "Пользователь успешно зарегестрирован" });
+      return res.json(user);
 
     } catch (error) {
       console.log(error);

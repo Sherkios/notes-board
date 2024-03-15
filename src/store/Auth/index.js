@@ -59,9 +59,11 @@ export default {
         response.data.roles.forEach(role => {
           commit("setRole", role);
         });
+        return response;
       } catch (error) {
-        console.log('Ошибка в сторе',error)
+        // console.log('Ошибка в сторе',error)
         // throw error;
+        return error
       }
     },
 
