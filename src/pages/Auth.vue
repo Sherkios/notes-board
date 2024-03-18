@@ -43,11 +43,11 @@
         </template>
 
         <template #tooltip>
-          <div class="auth__tooltip" @mouseover="tooltip.show = true" @mouseleave="tooltip.show = false">
+          <!-- <div class="auth__tooltip" @mouseover="tooltip.show = true" @mouseleave="tooltip.show = false">
             <p class="auth__tooltip-header">Подсказка</p>
             
             <p class="auth__tooltip-info" :class="{'show': tooltip.show}">{{ getTooltip }}</p>
-          </div>
+          </div> -->
         </template>
 
         <template v-if="errorMessage" #errorMessage>
@@ -90,23 +90,33 @@ export default {
       this.errors.username = this.validateInput(this.username);
       this.errors.password = this.validateInput(this.password);
 
+
       try {
         if (this.getHasLogin()) {
           const response = await this.authorizate({
             username: this.username,
             password: this.password,
           });
-          if (response.status == 200) {
-            if (this.$route.query.redirect) {
-              this.$router.push(this.$route.query.redirect);
-            } else {
-              this.$router.push("/");
+          console.log(response)
+          if (response) {
+            if (response.status == 200) {
+              this.errorMessage = "";
+              if (this.$route.query.redirect) {
+                this.$router.push(this.$route.query.redirect);
+              } else {
+                this.$router.push("/");
+              }
+            }
+            if (response.status == 400) {
+              console.log(response)
+              this.errorMessage = response.data.message;
             }
           }
           
+          
+          
         }
       } catch (error) {
-        console.log(error);
         if (error.data.message == "Invalid credentials") {
           this.errorMessage = "Неверный логин или пароль";
         } else {
@@ -118,10 +128,10 @@ export default {
       let has = false;
       for (let value of Object.values(this.errors)) {
         if (!has) {
-          has = this.validateInput(value);
+          has = value;
         }
       }
-      return has;
+      return !has;
     },
   },
   computed: {

@@ -116,7 +116,6 @@ export default {
         if (error.response.status == 405) {
           return error.response
         }
-        console.log(error);
       }
     },
 
@@ -126,7 +125,9 @@ export default {
         const response = await axios.delete(`http://localhost:5000/api/users/${id}`);
         return response;
       } catch (error) {
-        return error;
+        if (error.response) {
+          return error.response;
+        }
       }
     },
 
@@ -136,7 +137,9 @@ export default {
         const response = await axios.post('http://localhost:5000/api/users/registration', {username, password, firstName,lastName});
         return response;
       } catch (error) {
-        return error;
+        if (error.response) {
+          return error.response;
+        }
       }
     }
   },

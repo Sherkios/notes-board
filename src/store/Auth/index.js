@@ -44,6 +44,9 @@ export default {
     },
     isAdmin(state) {
       return state.role.includes('admin');
+    },
+    currentUserId(state) {
+      return state.userId;
     }
   },
   actions: {
@@ -61,9 +64,11 @@ export default {
         });
         return response;
       } catch (error) {
-        // console.log('Ошибка в сторе',error)
+        console.warn('Ошибка при авторизации',error)
         // throw error;
-        return error
+        if (error.response.data.message) {
+          return error.response
+        }
       }
     },
 

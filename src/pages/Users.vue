@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper users">
     <title-box>
-      <template #default>Список пользователей</template>
+      <template #default>Список пользователей </template>
       <template #button><my-button @click="showDialog('add')">Зарегестрировать пользователя +</my-button></template>
     </title-box>
     
@@ -99,6 +99,14 @@
     v-model:userEl="updateUser"
     @hide="hideDialog"
     @update-user="onUpdateUser"></change-form>
+
+    <default-form
+    v-if="typeDialog == 'error'"
+    v-model:userEl="updateUser"
+    @hide="hideDialog"
+    @update-user="onUpdateUser">{{errorMessage}}</default-form>
+
+    
   </my-dialog>
 
 </template>
@@ -134,6 +142,8 @@ export default {
   computed: {
     ...mapGetters({
       stateUsers: 'users/getUsers',
+      errorMessage: 'errors/getErrorMessage',
+      currentUserId: 'auth/currentUserId',
     }),
     checkedUser() {
       let check = false;
@@ -157,11 +167,15 @@ export default {
     },
   },
   methods: {
+    ...mapMutations({
+      setErrorMessage: 'errors/setErrorMessage',
+    }),
     ...mapActions({
       getUsers: 'users/getUser',
       upadateUsers: 'users/upadateUsers',
       deleteUser: 'users/deleteUser',
       _createUser: 'users/createUser',
+      logout: 'auth/logOut',
     }),
     async createUser(user) {
       const response = await this._createUser(user);
@@ -180,19 +194,25 @@ export default {
       option.currentClass= className;
       const response = await this.upadateUsers(user);
 
-      console.log(response)
 
       if (response.status != 200) {
         option.current = befCur;
         option.currentClass = befCurCl;
+        this.showErrorMessage(response.data.message);
       }
     },
     async onDeleteUser(id) {
       const response = await this.deleteUser(id);
       if (response.status == 200) {
         this.users = this.users.filter(user => user._id != response.data._id);
+        delete this.choisesUser[id];
+        console.log(response.data._id, this.currentUserId, response.data._id == this.currentUserId);
+        if (response.data._id == this.currentUserId) {
+          this.logout();
+        }
+      } else if(response.status == 405) {
+        this.showErrorMessage(response.data.message);
       }
-      delete this.choisesUser[id];
     },
     setGlobalCheckbox(e) {
       for (const key of Object.keys(this.choisesUser)) {
@@ -272,6 +292,15 @@ export default {
     },
     async onUpdateUser(user) {
       const response = await this.upadateUsers(user);
+      if (response.status == 200) {
+
+      } else if (response.status == 405) {
+        this.showErrorMessage(response.data.message);
+      }
+    },
+    showErrorMessage(error) {
+      this.setErrorMessage(error);
+      this.showDialog('error')
     }
   },
   
