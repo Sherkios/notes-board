@@ -4,7 +4,6 @@
 
 <script>
 import { mapState, mapActions, mapGetters, mapMutations } from "vuex";
-import getCoockie from "@/functions/Coockies/GetCookie";
   export default {
     async mounted() {
     },

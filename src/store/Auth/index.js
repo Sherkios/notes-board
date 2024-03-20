@@ -1,5 +1,3 @@
-import deleteCookie from "@/functions/Coockies/DeletaCookie";
-import setCookie from "@/functions/Coockies/SetCookie";
 import router from "@/router";
 import axios from "axios";
 export default {

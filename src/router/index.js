@@ -1,5 +1,4 @@
 import AllNotes from '@/pages/AllNotes.vue'
-import getCookie from '@/functions/Coockies/GetCookie.js'
 import authenticationToken from '@/functions/Auth/AuthenticationToken.js'
 import { createRouter, createWebHistory } from 'vue-router'
 import store from '@/store'

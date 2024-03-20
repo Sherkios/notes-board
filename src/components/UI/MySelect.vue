@@ -23,7 +23,6 @@
 </template>
 
 <script>
-import changeStyleProperties from "@/functions/Css/ChangeStyleProperties";
 export default {
   name: 'my-select',
   props: {
